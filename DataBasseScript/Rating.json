@@ -1,0 +1,15 @@
+[{
+
+"StudnetId": "Navnath@gmail.com",
+"EventId": "69a01f272c37dbe67656069c",
+"Score":1,
+"Comment": "good",
+"RetingDate": {"$date": "2026-02-26T00:00:00.000Z"  }
+},
+{
+"StudnetId": "Navnath@gmail.com"
+"EventId": "69a01f2e2c37dbe67656069d",
+"Score":1,
+"Comment": "good"
+"RetingDate": {"$date": "2026-02-26T00:00:00.000Z"  }
+}]

@@ -1,0 +1,57 @@
+// Insert a single event
+db.EventPublisher.insertOne({
+  publisherId: "mona@gmail.com",
+  title: "Mumbai Marathon 2026",
+  type: "sport",
+  date: new Date("2026-03-15"),
+  location: "Mumbai, India",
+  cost: 1500, // in INR
+  maxNumberOfParticipants: 5000
+});
+
+// Insert multiple events at once
+db.EventPublisher.insertMany([
+  {
+    publisherId: "Navnath@gmail.com",
+    title: "Sunburn Music Festival",
+    type: "concert",
+    date: new Date("2026-12-28"),
+    location: "Goa, India",
+    cost: 4500,
+    maxNumberOfParticipants: 20000
+  },
+  {
+    publisherId: "pranav@gmail.com",
+    title: "National Chess Championship",
+    type: "sport",
+    date: new Date("2026-07-10"),
+    location: "Delhi, India",
+    cost: 800,
+    maxNumberOfParticipants: 300
+  }
+]);
+
+
+
+db.Student.insertOne({
+  EmailId: "mona@gmail.com",
+  Name: "Mumbai Marathon 2026",
+Subscribed:true
+  });
+db.Student.insertOne({
+  EmailId: "mpranav@gmail.com",
+  Name: "Mumbai Marathon 2026",
+Subscribed:true
+  });
+
+db.Booking.insertOne({
+  EmailId: "mona@gmail.com",
+  EventId: "6998af552576b3f993ffa7e7",
+  BookingDate: new Date("2026-07-10")
+  });
+
+db.Booking.insertOne({
+  EmailId: "pranav@gmail.com",
+  EventId: "6998af552576b3f993ffa7e7",
+  BookingDate: new Date("2026-07-10")
+  });

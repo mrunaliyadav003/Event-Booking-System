@@ -1,0 +1,201 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Student meet Upe</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  
+
+  
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </nav>
+
+      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+        <form>
+            <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-3">
+             <h1 class=" heading-title ">Event Register</h1>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Publisher Email</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" id="inputpublisherId" placeholder="">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Title</label>
+    <div class="col-sm-6">
+      <input type="input" class="form-control" id="inputTitle" placeholder=" ">
+    </div>
+  </div>
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Event Date</label>
+    <div class="col-sm-2">
+      <input type="date" class="form-control datepicker" id="inputDate" placeholder="Event Date">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Location</label>
+    <div class="col-sm-6">
+      <input type="input" class="form-control" id="inputlocation" placeholder=" ">
+    </div>
+  </div>
+
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">cost</label>
+    <div class="col-sm-2">
+      <input type="input" class="form-control" id="inputcost" placeholder="">
+    </div>
+  </div>
+
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">max Number Of Participants</label>
+</label>
+    <div class="col-sm-2">
+      <input type="input" class="form-control" id="inputmaxNumberOfParticipants" placeholder=" ">
+    </div>
+  </div>
+
+  <fieldset class="form-group">
+    <div class="row">
+      <legend class="col-form-label col-sm-2 pt-0">type</legend>
+      <div class="col-sm-2">
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="sport" checked>
+          <label class="form-check-label" for="gridRadios1">
+           sport
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="concert">
+          <label class="form-check-label" for="gridRadios2">
+            concert
+          </label>
+        </div>
+        <div class="form-check disabled">
+          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="etc" disabled>
+          <label class="form-check-label" for="gridRadios3">
+            etc
+          </label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-2">
+      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+       <input type="button"  class="btn btn-success" value="Cancel" onclick="window.location.href='EventRegisterList.html'">
+    </div>
+  </div>
+
+</form>
+
+  
+          </div>
+        </div>
+      </div>
+     </div><!-- End Page Title -->
+  </main>
+<footer id="footer" class="footer">
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  
+  <script>
+  function AddRecord()
+  
+  {
+    var publisherId = $('#inputpublisherId').val();
+    var title = $('#inputTitle').val();
+    var eventDate =$('#inputDate').val(); 
+    //'2026-12-28T00:00:00.000Z'
+    //$('#inputDate').val();
+    var location = $('#inputlocation').val();
+    var cost = $('#inputcost').val();
+    var maxNumberOfParticipants = $('#inputmaxNumberOfParticipants').val();
+    var type = $("input[name='gridRadios']:checked").val();
+
+  
+
+    var record = {
+      publisherId: publisherId,
+      title: title,
+      date: eventDate,
+      location: location,
+      cost: cost,
+      maxNumberOfParticipants: maxNumberOfParticipants,
+      type: type
+    };
+
+//alert(JSON.stringify(record)) ;
+
+    $.ajax({
+      url: "http://localhost:8080/events/create",
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      data: JSON.stringify(record),
+      success: function(response) {
+        alert("Event created successfully!");
+        console.log("Event created successfully:", response);
+      },
+      error: function(xhr, status, error) {
+        alert("Error creating event.");
+        console.error("Error creating event:", error);
+      }
+    });
+  }
+  
+  function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
+var id = getUrlParameter('id');
+
+
+ 
+
+    </script>
+
+    
+</body>
+
+</html>

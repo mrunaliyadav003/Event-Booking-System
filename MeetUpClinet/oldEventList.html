@@ -1,0 +1,132 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Student meet Upe</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+ <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+     
+
+      <a class="btn-getstarted" href="event.html">Event  </a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+          <table id="example" class="table table-striped" style="width:100%">
+  <thead >   
+    <tr  class="table bg-warning">
+      <th scope="col">Publisher Email</th>
+      <th scope="col">Title</th>
+      <th scope="col">Event Date</th>
+      <th scope="col">Location</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Max Number Of Participants</th>
+      <th scope="col">Type</th>
+      <th >Action</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    </tbody>
+</table>
+
+  
+          </div>
+        </div>
+      </div>
+     </div><!-- End Page Title -->
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  <!-- jQuery -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>  
+    <script>
+        $(document).ready(function () {
+           
+ $.ajax({
+      url: "http://localhost:8080/events/getAll",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(response) {
+        var content='';
+          response.forEach(function(event) {
+            content += '<tr>';
+            content += '<td>' + event.publisherId + '</td>';
+            content += '<td>' + event.title + '</td>';
+            content += '<td>' + event.date + '</td>';
+            content += '<td>' + event.location + '</td>';
+            content += '<td>' + event.cost + '</td>';
+            content += '<td>' + event.maxNumberOfParticipants + '</td>';
+            content += '<td>' + event.type + '</td>';
+            content += '<td>';
+            content += '<a href="RegisterEdit.html?id='+event.id+'"><button class="btn btn-primary">Edit</button></a>';
+            content += '<Input type="button" onclick="AddRecord(\''+event.id+'\')"  class="btn btn-danger" value="Delete" /></td>';
+            content += '</tr>';
+          });
+          $('#example tbody').html(content);
+          $('#example').DataTable();  
+        console.log("Event Get data successfully:", response);
+      },
+      error: function(xhr, status, error) {
+        console.error("Error getting data for events:", error);
+      }
+    });
+
+        });
+
+
+        function AddRecord(id){
+                alert(JSON.stringify(id)) ;
+                $.ajax({
+                url: "http://localhost:8080/events/delete?id="+JSON.stringify(id),
+                type: "delete",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(id),
+            success: function(response) {
+                alert("Event deleted successfully!");
+                console.log("Event deleted successfully:", response);
+            },
+            error: function(xhr, status, error) {
+                alert("Error deleting event.");
+                console.error("Error deleting event:", error);
+            }
+          });
+          location.reload();
+             }
+
+    </script>
+    
+</body>
+
+</html>

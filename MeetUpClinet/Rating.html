@@ -1,0 +1,217 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Rating & Feedback - Student meet Up</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  
+  
+  
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+          
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+        <form>
+
+<!-- Booking Star-->
+<div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
+              <div id="myeventCard" class="event-info mb-5">
+                
+                </div>
+ </div>
+
+<!-- Booking End -->
+            <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-3">
+             <h1 class=" heading-title ">Rating & Feedback</h1>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Your EmailId</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" id="inputstudentId">
+    </div>
+  </div>
+
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Your Feedback</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" id="inputcomment">
+    </div>
+  </div>
+<br>
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Rating</label>
+    <div class="col-sm-3">
+       <select name="Rating" id="Rating" class="form-control" required="">
+                    <option value="1">1 </option>
+                    <option value="2">2 </option>
+                    <option value="3">3 </option>
+                    <option value="4">4 </option>
+                    <option value="5">5 </option>
+                  </select>
+    </div>
+  </div>
+<br>
+
+  
+  
+                <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-3">
+      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+      <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+    </div>
+  </div>
+<div style="display:none;"  >  
+  <input type="hidden" id="eventId" value="">
+  <input  id="studentId" value="">
+  <input type="hidden" id="eventpublisherId" value="">
+</div>
+</div>
+</form>
+
+  
+          </div>
+        </div>
+      </div>
+     </div><!-- End Page Title -->
+  </main>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  
+  <script>
+
+    
+     function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
+var id = getUrlParameter('id');
+LoadData(id);
+
+    function LoadData(id) {
+
+      var requestUrl="http://localhost:8080/events/getById?id=" + id;
+      
+          $.ajax({
+                url: requestUrl,
+                type: "Get",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                 // alert(JSON.stringify(response));
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  alert(error);
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+
+   function bindData(response){
+        var content='';
+          var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
+             '<div class="card-body">' +
+             '<h2 class="card-title">' + response.title + '</h2>' +
+           //  '<h6 class="card-subtitle mb-2 text-muted">Type: ' + response.type + '</h6>' +   
+              '<p class="card-text">' + 
+                '👥 Type: ' + response.type +  '<br>' +
+                '📍 Location: ' + response.location + '<br>' 
+                + '📅 Date: ' + new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
+                '💰 Cost: ' + response.cost + '<br>' +
+              //  '👥 Max Participants: ' + response.maxNumberOfParticipants +
+                '</p>' +
+                '</div>' +
+                '</div>' +
+                '</div>' ;
+  
+                content += eventCard;
+                $('#eventId').val(response.id);
+              //  $('#eventDate').val(new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ));
+
+
+                
+              
+        $('#myeventCard').html(content);
+
+      }
+
+
+function AddRecord()
+  {
+            var StudentId = $('#inputstudentId').val();
+            var Comment = $('#inputcomment').val();
+            var EventId = getUrlParameter('id');
+            var RatingDate=new Date().toISOString().split('T')[0];
+            var Rating=$('#Rating').val();
+         var requestData = {
+           eventId: EventId,
+            studentId: StudentId,
+            score: Rating,
+            comment: Comment,
+            ratingDate: '2026-03-06T15:53:55.272Z'
+            };
+
+    //alert(JSON.stringify(requestData));
+      var reqData=JSON.stringify(requestData);
+        $.ajax({
+      url: "http://localhost:8080/Rating/create",
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      data: reqData,
+      headers: {'Accept': '*/*'}, 
+      success: function(response) {
+        alert("Feedback submitted successfully!");
+        console.log("Feedback submitted successfully:", response);
+      },
+      error: function(xhr, status, error) {
+        alert("Error submitting Feedback.");
+        console.error("Error submitting Feedback:", error);
+      }
+    });
+
+    
+  }
+
+
+  </script>
+    
+</body>
+
+</html>

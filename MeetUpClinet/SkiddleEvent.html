@@ -1,0 +1,132 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Skiddle Event - Student meet Upe</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </nav>
+
+      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <div class="container">
+          <br>
+          <div class="form-group row">
+
+         <div id="myeventCard" class="row"> <!-- First chart --> 
+        
+      </div> 
+    </div>
+    
+        </div>
+    </div>
+  </main>  
+     <!-- End Page Title -->
+<footer>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  <!-- jQuery -->
+    <script>
+      function bindData(response){
+        var content='';
+       
+          response.forEach(function(event) {
+
+            //var vanueitem=event.vanue;
+       //  debugger;
+            var location =event.venue.name ? event.venue.name : "N/A";
+            var Address;// = vanueitem.address ? vanueitem.address : "N/A";
+            var cost= event.ticketpricing.maxPrice ? event.ticketpricing.maxPrice : "N/A";
+            
+
+          var eventCard ='<div class="col-md-6">  <div class="card feature-card shadow-sm mb-3">' +
+             '<div class="card-body">' +
+             '<h5 class="card-title">' + event.eventname + '</h5>' +
+             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + event.EventCode + '</h6>' +
+             '<p class="card-text">' +  
+            '📍 Location: ' + location + '<br>'+
+           //   '📍 Address: ' + Address + '<br>' 
+ 
+              '📅 Date: ' + event.date + '<br>' +
+              '💰 Cost: ' +event.currency +"  "+ cost + '<br>' +
+              '</p>' +
+              '<a href="Booking.html?id=' + event.id + '" class="btn btn-success">Register</a>' +
+              '</div>' +
+              '</div>' +
+              '</div>' ;
+
+              content += eventCard;
+          });
+        
+        $('#myeventCard').html(content);
+      }
+
+
+
+$(document).ready(function () {
+
+           var requestData = {
+            lat: "52.950001",
+            lon: "-1.150000",
+            radius:5
+            };
+
+    //alert(JSON.stringify(requestData));
+      var reqData=JSON.stringify(requestData);
+  
+
+ $.ajax({
+      url: "http://localhost:8080/skiddleEventData/search",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(response) {
+      //  alert(JSON.stringify(response));
+        bindData(response.results);
+        console.log("Event Get data successfully:", response);
+      },
+      error: function(xhr, status, error) {
+        console.error("Error getting data for events:", error);
+      }
+    });
+
+        });
+
+
+    </script>
+    
+</body>
+
+</html>

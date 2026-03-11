@@ -1,0 +1,87 @@
+db.createCollection("EventPublisher", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["publisherId", "title", "type", "date", "location", "cost", "maxNumberOfParticipants"],
+      properties: {
+        publisherId: { bsonType: "string" },
+        title: { bsonType: "string" },
+        type: { enum: ["sport", "concert", "other"] },
+        date: { bsonType: "date" },
+        location: { bsonType: "string" },
+        cost: { bsonType: "number", minimum: 0 },
+        maxNumberOfParticipants: { bsonType: "int", minimum: 1 }
+      }
+    }
+  }
+});
+
+db.createCollection("Student", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["Name", "EmailId"],
+      properties: {
+        Name: { bsonType: "string" },
+        EmailId: { bsonType: "string" },
+	Subscribed: { bsonType: "bool" }
+
+
+      }
+    }
+  }
+});
+
+db.createCollection("Rating", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["StudnetId", "EventId"],
+      properties: {
+        StudnetId: { bsonType: "string" },
+        EventId: { bsonType: "string" },
+        Score: { bsonType: "number", minimum: 0 },
+        Comment: { bsonType: "string" },
+        RetingDate:  { bsonType: "date" },
+      }
+    }
+  }
+});
+
+
+private String EventId;
+    private String EmailId;
+    private Date BookingDate;
+    private int NumberofTickets;
+    private int SequenceNo;
+
+    private String publisherId;
+    private String title;
+    private String type;
+    private Date date;
+    private String location;
+    private Double cost;
+
+
+db.createCollection("Booking", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["EventId", "EmailId","BookingDate"],
+      properties: {
+        EventId: { bsonType: "string" },
+        EmailId: { bsonType: "string" },
+	BookingDate: { bsonType: "date" },
+	NumberofTickets: { bsonType: "int", minimum: 1 },
+ 	SequenceNo: { bsonType: "int", minimum: 1 },
+	 publisherId: { bsonType: "string" },
+        title: { bsonType: "string" },
+        type: { enum: ["sport", "concert", "other"] },
+        date: { bsonType: "date" },
+        location: { bsonType: "string" },
+        cost: { bsonType: "number", minimum: 0 }
+
+      }
+    }
+  }
+});

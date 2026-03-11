@@ -1,0 +1,22 @@
+db.getCollection('EventPublisher').aggregate(
+  [
+    {
+      $search: {
+        index: 'EventSearch',
+        text: {
+          query: 'Goa',
+          path: [
+            'publisherId',
+            'title',
+            'type',
+            'location',
+            'date',
+            'maxNumberOfParticipants'
+          ],
+          matchCriteria: 'any'
+        }
+      }
+    }
+  ],
+  { maxTimeMS: 60000, allowDiskUse: true }
+);

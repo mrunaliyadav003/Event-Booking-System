@@ -1,0 +1,236 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Student meet Upe</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="Event.html" class="active">Event</a></li>
+          <li><a href="SkiddleEvent.html" class="active">Skiddle Event</a></li>
+
+        </ul>
+      </nav>
+
+      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+        <div class="container">
+          <br>
+          <div class="form-group row">
+           <div class="col-md-2"> 
+          <div class="input-group "> 
+            <input type="input" id="Searchevent" class="form-control" placeholder="Search..." aria-label="Search"> 
+            <button onclick="SearchEvent()" class="btn btn-primary" type="button">Search</button> </div>
+          
+          </div>
+        <div class="col-md-3"> 
+          <div class="input-group "> 
+            <label class="input-group-text" for="inputGroupSelect01">Filter by Type</label>
+            <input type="input" id="SearchType" class="form-control" placeholder="Search..." aria-label="Search"> <button onclick="SearchType()" class="btn btn-primary"  type="button">Search</button> </div>
+           </div>
+
+             <div class="col-md-3"> 
+          <div class="input-group "> 
+            <label class="input-group-text" for="inputGroupSelect01">Filter by Date</label>
+            <input type="date" class="form-control" id="SearchDate" placeholder="Search..." aria-label="Search"> <button class="btn btn-primary" onclick="SearchDate()" type="button">Search</button> </div>
+           </div>
+
+           <div class="col-md-3"> 
+          <div class="input-group "> 
+            <label class="input-group-text" for="inputGroupSelect01">Filter by Location</label>
+            <input type="input" class="form-control" id="SearchLocation" placeholder="Search..." aria-label="Search"> <button class="btn btn-primary" onclick="SearchLocation()" type="button">Search</button> </div>
+           </div>
+
+        </div>
+
+         <div id="myeventCard" class="row"> <!-- First chart --> 
+        
+      </div> 
+    </div>
+    
+        </div>
+  </main>  
+     <!-- End Page Title -->
+<footer>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  <!-- jQuery -->
+    <script>
+      function bindData(response){
+        var content='';
+
+          response.forEach(function(event) {
+
+
+        var eventCardb="";
+        var eventCardc=""
+        var ticketcont=event.maxNumberOfParticipants-event.bookingCount;
+        
+
+
+            var eventCard ='<div class="col-md-6">  <div class="card feature-card shadow-sm mb-3">' +
+             '<div class="card-body">' +
+             '<h5 class="card-title">' + event.title + '</h5>' +
+             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + event.type + '</h6>' +
+             '<p class="card-text">' +  
+              '📍 Location: ' + event.location + '<br>' +
+              '📅 Date: ' + new Date(event.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
+              '💰 Cost: GBP ' + event.cost + '<br>' +
+              '👥 tickets Available: ' + ticketcont + '<br>' +
+              '✓ Rating: ' + event.ratingCount + '|  Message'  + '<br>' +
+              '</p>' ;
+           
+              if(event.bookingCount<event.maxNumberOfParticipants){
+                eventCardb= '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Registered</a>' ;
+              }
+              else{
+               eventCardb= '<a href="#" class="btn btn-warning">Event Full</a>' ;
+              }
+
+             eventCardc= ' <a href="Rating.html?id=' + event.id + '" class="btn btn-warning">Rating & Feedback</a>' +'</div>' +
+              '</div>' +
+              '</div>' ;
+
+              content += eventCard+ eventCardb + eventCardc;
+          });
+        
+        $('#myeventCard').html(content);
+      }
+
+ function SearchEvent() {
+
+         var searchTerm = $('#Searchevent').val();
+
+          $.ajax({
+                url: "http://localhost:8080/events/SeachByText?text=" + searchTerm,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+ function SearchDate() {
+
+         var searchData = $('#SearchDate').val();
+       // alert(searchData);
+          $.ajax({
+                url: "http://localhost:8080/events/getByDate?date=" + searchData,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+       function SearchLocation() {
+
+         var searchData = $('#SearchLocation').val();
+      //  alert(searchData);
+          $.ajax({
+                url: "http://localhost:8080/events/getLocation?location=" + searchData,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+
+       function SearchType() {
+
+         var searchData = $('#SearchType').val();
+        // alert(searchData);
+
+          $.ajax({
+                url: "http://localhost:8080/events/getType?type=" + searchData,
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+
+$(document).ready(function () {
+           
+ $.ajax({
+      url: "http://localhost:8080/events/getAll",
+      type: "GET",
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function(response) {
+        bindData(response);
+        console.log("Event Get data successfully:", response);
+      },
+      error: function(xhr, status, error) {
+        console.error("Error getting data for events:", error);
+      }
+    });
+
+        });
+
+
+    </script>
+    
+</body>
+
+</html>

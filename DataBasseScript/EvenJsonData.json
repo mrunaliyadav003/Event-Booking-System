@@ -1,0 +1,45 @@
+[{
+  "_id": {
+    "$oid": "69a01f272c37dbe67656069c"
+  },
+  "publisherId": "Navnath@gmail.com",
+  "title": "Sunburn Music Festival",
+  "type": "concert",
+  "date": {
+    "$date": "2026-02-26T00:00:00.000Z"
+  },
+  "location": "Goa, India",
+  "cost": 23,
+  "maxNumberOfParticipants": 55,
+  "_class": "com.eventbookingapi.studentmeetup.collection.Events"
+},
+{
+  "_id": {
+    "$oid": "69a01f2e2c37dbe67656069d"
+  },
+  "publisherId": "Navnath@gmail.com",
+  "title": "Sunburn Music Festival",
+  "type": "sport",
+  "date": {
+    "$date": "2026-02-26T00:00:00.000Z"
+  },
+  "location": "Goa, India",
+  "cost": 230,
+  "maxNumberOfParticipants": 55,
+  "_class": "com.eventbookingapi.studentmeetup.collection.Events"
+},
+{
+  "_id": {
+    "$oid": "69a0a73d03a95991ea98d132"
+  },
+  "publisherId": "navnath@gmail.com",
+  "title": "sdemo",
+  "type": "concert",
+  "date": {
+    "$date": "2026-02-27T00:00:00.000Z"
+  },
+  "location": "mumbai",
+  "cost": 20,
+  "maxNumberOfParticipants": 333,
+  "_class": "com.eventbookingapi.studentmeetup.collection.Events"
+}]
