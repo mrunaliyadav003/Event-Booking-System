@@ -3,20 +3,17 @@ package com.eventbookingapi.studentmeetup.Service;
 import com.eventbookingapi.studentmeetup.collection.*;
 import com.eventbookingapi.studentmeetup.repository.BookingRepository;
 import com.eventbookingapi.studentmeetup.repository.EventPublisherRepository;
-import com.eventbookingapi.studentmeetup.repository.RetingRepository;
+import com.eventbookingapi.studentmeetup.repository.RatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Service
 public class EventService {
     @Autowired
-    private RetingRepository ratingRepository;
+    private RatingRepository ratingRepository;
 
     @Autowired
     private BookingRepository bookingRepository;

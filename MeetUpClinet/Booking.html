@@ -102,7 +102,20 @@
   
   <script>
 
-    
+    // Check if user is logged in
+    $(document).ready(function () {
+      if (!localStorage.getItem('user')) {
+        alert('Please login to book events');
+        window.location.href = 'Login.html';
+        return;
+      }
+
+      // Pre-fill email from logged in user
+      var user = JSON.parse(localStorage.getItem('user'));
+      $('#inputBookingemailId').val(user.email);
+      $('#inputBookingemailId').prop('readonly', true);
+    });
+
      function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');

@@ -18,10 +18,19 @@ public class SkiddleEventController {
    // }
 
     @GetMapping("/search")
-    public String searchEvents( @RequestParam(defaultValue = "52.950001") double lat, @RequestParam(defaultValue = "-1.150000") double lon,@RequestParam(defaultValue = "5") int radius)
+    public String searchEvents( @RequestParam(defaultValue = "52.950001") double lat,
+                               @RequestParam(defaultValue = "-1.150000") double lon,
+                               @RequestParam(defaultValue = "5") int radius,
+                               @RequestParam(defaultValue = "false") boolean studentOnly)
     {
         String YOUR_API_KEY="10b7a4ff78df7f0759306016376c3a34";
         String url = "https://www.skiddle.com/api/v1/events/search/?api_key="+YOUR_API_KEY+"&latitude="+lat+"&longitude="+lon+"&radius="+radius;
+
+        // Add student-specific keyword filter if requested
+        if (studentOnly) {
+            url += "&keyword=student";
+        }
+
         RestTemplate restTemplate = new RestTemplate();
         String result = restTemplate.getForObject(url,String.class);
         return result;

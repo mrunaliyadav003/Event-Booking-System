@@ -29,10 +29,15 @@
           <li><a href="SkiddleEvent.html" class="active">Skiddle Event</a></li>
 
         </ul>
-       
+
       </nav>
 
-      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+      <div id="authButtons">
+        <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
+        <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
+        <span id="userWelcome" style="display:none; margin-right: 10px; color: black; font-weight: bold;"></span>
+        <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
+      </div>
 
     </div>
   </header>
@@ -84,9 +89,34 @@
   </footer>
 
 <script>
-     
 
 $(document).ready(function () {
+
+  // Check if user is logged in
+  var user = localStorage.getItem('user');
+  if (user) {
+    user = JSON.parse(user);
+    $('#loginBtn').hide();
+    $('#eventRegisterBtn').show();
+    $('#userWelcome').text('Welcome, ' + user.name).show();
+    $('#logoutBtn').show();
+  } else {
+    $('#loginBtn').show();
+    $('#eventRegisterBtn').hide();
+    $('#userWelcome').hide();
+    $('#logoutBtn').hide();
+  }
+
+  // Logout functionality
+  $('#logoutBtn').on('click', function(e) {
+    e.preventDefault();
+    localStorage.removeItem('user');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+    alert('Logged out successfully!');
+    location.reload();
+  });
            
  $.ajax({
       url: "http://localhost:8080/events/getAll",

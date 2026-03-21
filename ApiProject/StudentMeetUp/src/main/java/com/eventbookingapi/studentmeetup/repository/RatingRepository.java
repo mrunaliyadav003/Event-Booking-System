@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface RatingRepository extends MongoRepository<Rating, String> {
-    List<Rating> findByEventId(String id);
+    List<Rating> findByEventId(String eventId);
 }

@@ -110,7 +110,16 @@
   
   <script>
 
-    
+    // Check if user is logged in and pre-fill email
+    $(document).ready(function () {
+      var user = localStorage.getItem('user');
+      if (user) {
+        user = JSON.parse(user);
+        $('#inputstudentId').val(user.email);
+        $('#inputstudentId').prop('readonly', true);
+      }
+    });
+
      function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -177,36 +186,41 @@ function AddRecord()
             var StudentId = $('#inputstudentId').val();
             var Comment = $('#inputcomment').val();
             var EventId = getUrlParameter('id');
-            var RatingDate=new Date().toISOString().split('T')[0];
-            var Rating=$('#Rating').val();
-         var requestData = {
-           eventId: EventId,
-            studentId: StudentId,
-            score: Rating,
-            comment: Comment,
-            ratingDate: '2026-03-06T15:53:55.272Z'
+            var RatingScore = parseInt($('#Rating').val());
+            var RatingDate = new Date().toISOString();
+
+            // Validate inputs
+            if (!StudentId || !Comment || !EventId) {
+              alert("Please fill in all fields");
+              return;
+            }
+
+            var requestData = {
+              eventId: EventId,
+              studentId: StudentId,
+              score: RatingScore,
+              comment: Comment,
+              ratingDate: RatingDate
             };
 
-    //alert(JSON.stringify(requestData));
-      var reqData=JSON.stringify(requestData);
-        $.ajax({
-      url: "http://localhost:8080/Rating/create",
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: reqData,
-      headers: {'Accept': '*/*'}, 
-      success: function(response) {
-        alert("Feedback submitted successfully!");
-        console.log("Feedback submitted successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        alert("Error submitting Feedback.");
-        console.error("Error submitting Feedback:", error);
-      }
-    });
+            console.log("Submitting rating:", JSON.stringify(requestData));
 
-    
+            $.ajax({
+              url: "http://localhost:8080/Rating/create",
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              data: JSON.stringify(requestData),
+              success: function(response) {
+                alert("Feedback submitted successfully!");
+                console.log("Feedback submitted successfully:", response);
+                window.location.href = 'Event.html';
+              },
+              error: function(xhr, status, error) {
+                alert("Error submitting Feedback: " + error);
+                console.error("Error submitting Feedback:", xhr.responseText);
+              }
+            });
   }
 
 

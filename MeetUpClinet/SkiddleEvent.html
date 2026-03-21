@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Skiddle Event - Student meet Upe</title>
+  <title>Skiddle Event - Student meet Up</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -24,7 +24,12 @@
         </ul>
       </nav>
 
-      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+      <div id="authButtons">
+        <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
+        <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
+        <span id="userWelcome" style="display:none; margin-right: 10px; color: black; font-weight: bold;"></span>
+        <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
+      </div>
 
     </div>
   </header>
@@ -35,13 +40,65 @@
     <div class="page-title">
         <div class="container">
           <br>
+
+          <!-- Search Form -->
+          <div class="row mb-4">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Search Events</h5>
+                  <form id="searchForm">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="citySelect">Select City</label>
+                          <select class="form-control" id="citySelect">
+                            <option value="52.950001,-1.150000">Nottingham</option>
+                            <option value="51.507351,-0.127758">London</option>
+                            <option value="53.483959,-2.244644">Manchester</option>
+                            <option value="52.486243,-1.890401">Birmingham</option>
+                            <option value="53.800755,-1.549077">Leeds</option>
+                            <option value="53.408371,-2.991573">Liverpool</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label for="radius">Radius (miles)</label>
+                          <input type="number" class="form-control" id="radius" value="10" min="1" max="50">
+                        </div>
+                      </div>
+                      <div class="col-md-3">
+                        <div class="form-group">
+                          <label>&nbsp;</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="studentOnly" checked>
+                            <label class="form-check-label" for="studentOnly">
+                              Student Events Only
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-2">
+                        <div class="form-group">
+                          <label>&nbsp;</label>
+                          <button type="submit" class="btn btn-primary btn-block">Search</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group row">
 
-         <div id="myeventCard" class="row"> <!-- First chart --> 
-        
-      </div> 
+         <div id="myeventCard" class="row"> <!-- First chart -->
+
+      </div>
     </div>
-    
+
         </div>
     </div>
   </main>  
@@ -95,32 +152,93 @@
 
 
 
+      function searchEvents(lat, lon, radius, studentOnly) {
+        var url = "http://localhost:8080/skiddleEventData/search?lat=" + lat + "&lon=" + lon + "&radius=" + radius;
+        if (studentOnly) {
+          url += "&studentOnly=true";
+        }
+
+        $.ajax({
+          url: url,
+          type: "GET",
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(response) {
+            bindData(response.results);
+            console.log("Event Get data successfully:", response);
+          },
+          error: function(xhr, status, error) {
+            console.error("Error getting data for events:", error);
+            alert("Error loading events. Please try again.");
+          }
+        });
+      }
+
+      function geocodeLocation(location, callback) {
+        $.ajax({
+          url: "https://nominatim.openstreetmap.org/search",
+          type: "GET",
+          data: {
+            q: location,
+            format: "json",
+            limit: 1
+          },
+          success: function(response) {
+            if (response && response.length > 0) {
+              callback(response[0].lat, response[0].lon);
+            } else {
+              alert("Location not found. Please try a different location.");
+            }
+          },
+          error: function() {
+            alert("Error finding location. Please try again.");
+          }
+        });
+      }
+
 $(document).ready(function () {
 
-           var requestData = {
-            lat: "52.950001",
-            lon: "-1.150000",
-            radius:5
-            };
-
-    //alert(JSON.stringify(requestData));
-      var reqData=JSON.stringify(requestData);
-  
-
- $.ajax({
-      url: "http://localhost:8080/skiddleEventData/search",
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success: function(response) {
-      //  alert(JSON.stringify(response));
-        bindData(response.results);
-        console.log("Event Get data successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        console.error("Error getting data for events:", error);
+      // Check if user is logged in
+      var user = localStorage.getItem('user');
+      if (user) {
+        user = JSON.parse(user);
+        $('#loginBtn').hide();
+        $('#eventRegisterBtn').show();
+        $('#userWelcome').text('Welcome, ' + user.name).show();
+        $('#logoutBtn').show();
+      } else {
+        $('#loginBtn').show();
+        $('#eventRegisterBtn').hide();
+        $('#userWelcome').hide();
+        $('#logoutBtn').hide();
       }
-    });
+
+      // Logout functionality
+      $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        alert('Logged out successfully!');
+        window.location.href = 'index.html';
+      });
+
+      // Load default events (Nottingham area, student events only)
+      searchEvents(52.950001, -1.150000, 10, true);
+
+      // Handle search form submission
+      $('#searchForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var cityCoords = $('#citySelect').val().split(',');
+        var lat = parseFloat(cityCoords[0]);
+        var lon = parseFloat(cityCoords[1]);
+        var radius = $('#radius').val();
+        var studentOnly = $('#studentOnly').is(':checked');
+
+        searchEvents(lat, lon, radius, studentOnly);
+      });
 
         });
 
