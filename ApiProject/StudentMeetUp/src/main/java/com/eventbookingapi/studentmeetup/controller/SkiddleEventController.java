@@ -1,39 +1,51 @@
 package com.eventbookingapi.studentmeetup.controller;
 
-import com.eventbookingapi.studentmeetup.model.SkiddleData;
-import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.concurrent.Exchanger;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @CrossOrigin
 @RequestMapping(path="skiddleEventData")
 public class SkiddleEventController {
+    @Value("${external.skiddle.api-key:}")
+    private String skiddleApiKey;
     //private  final SkiddleEventService skiddleEventService;
     //public SkiddleEventController(SkiddleEventService skiddleEventService) {
     //    this.skiddleEventService = skiddleEventService;
    // }
 
     @GetMapping("/search")
-    public String searchEvents( @RequestParam(defaultValue = "52.950001") double lat,
+    public ResponseEntity<String> searchEvents( @RequestParam(defaultValue = "52.950001") double lat,
                                @RequestParam(defaultValue = "-1.150000") double lon,
                                @RequestParam(defaultValue = "5") int radius,
                                @RequestParam(defaultValue = "false") boolean studentOnly)
     {
-        String YOUR_API_KEY="10b7a4ff78df7f0759306016376c3a34";
-        String url = "https://www.skiddle.com/api/v1/events/search/?api_key="+YOUR_API_KEY+"&latitude="+lat+"&longitude="+lon+"&radius="+radius;
+        if (skiddleApiKey == null || skiddleApiKey.isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body("{\"error\":\"Skiddle API key not configured\"}");
+        }
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString("https://www.skiddle.com/api/v1/events/search/")
+                .queryParam("api_key", skiddleApiKey)
+                .queryParam("latitude", lat)
+                .queryParam("longitude", lon)
+                .queryParam("radius", radius);
 
         // Add student-specific keyword filter if requested
         if (studentOnly) {
-            url += "&keyword=student";
+            builder.queryParam("keyword", "student");
         }
 
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(url,String.class);
-        return result;
+        String result = restTemplate.getForObject(builder.toUriString(), String.class);
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(result);
     }
 
 

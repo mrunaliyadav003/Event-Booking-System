@@ -1,5 +1,6 @@
 package com.eventbookingapi.studentmeetup.collection;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,7 +23,10 @@ public class Student {
     @Id
     //@MongoId(FieldType.OBJECT_ID)
     private String  id;
+    @JsonAlias("name")
     private String Name;
+    @JsonAlias("emailId")
     private String EmailId;
-    private boolean Subscribed=false;
+    @JsonAlias("subscribed")
+    private Boolean Subscribed = false;
 }

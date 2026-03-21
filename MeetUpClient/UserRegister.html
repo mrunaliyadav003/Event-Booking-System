@@ -125,7 +125,7 @@
         console.log("Sending registration data:", JSON.stringify(userData));
 
         $.ajax({
-          url: "http://localhost:8080/auth/register",
+          url: "http://localhost:8081/auth/register",
           type: "POST",
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify(userData),
@@ -136,7 +136,7 @@
 
               // Auto-login after successful registration
               $.ajax({
-                url: "http://localhost:8080/auth/login",
+                url: "http://localhost:8081/auth/login",
                 type: "POST",
                 contentType: "application/json",
                 dataType: "json",

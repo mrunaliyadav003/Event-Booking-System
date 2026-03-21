@@ -25,6 +25,9 @@ public class User {
 
     private String phone;
 
+    @Builder.Default
+    private String role = "STUDENT"; // STUDENT or ADMIN
+
     private LocalDateTime createdAt;
 
     private LocalDateTime lastLoginAt;

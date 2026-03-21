@@ -23,57 +23,35 @@ public class EventService {
 
     public  List<EventDTO>  getallEventsRating()
     {
-        List<Rating> oblRatingList=ratingRepository.findAll();
-        List<Booking> obkBookingList=bookingRepository.findAll();
+        List<Rating> ratingList = ratingRepository.findAll();
+        List<Booking> bookingList = bookingRepository.findAll();
 
-
-        List<RatingCount> ratingCountMap = oblRatingList.stream()
-                .collect(Collectors.groupingBy(
-                        Rating::getEventId, // Group by eventId
-                        Collectors.counting() // Count bookings
-                ))
-                .entrySet().stream()
-                .map(entry -> new RatingCount(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-        List<BookingCount> bookingCountMap = obkBookingList.stream()
-                .collect(Collectors.groupingBy(
-                        Booking::getEventId, // Group by eventId
-                        Collectors.counting() // Count bookings
-                ))
-                .entrySet().stream()
-                .map(entry -> new BookingCount(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-
-
-        List<EventDTO>  result =  eventPublisherRepository.findAll().stream().map(e -> {
+        return eventPublisherRepository.findAll().stream().map(e -> {
             EventDTO dto = new EventDTO();
-            dto.getId(e.getId());
-            dto.getPublisherId(e.getPublisherId());
-            dto.getTitle(e.getTitle());
-            dto.getTitle(e.getType());
-            dto.getDate(e.getDate());
-            dto.getLocation(e.getLocation());
-            dto.getCost(e.getCost());
-            dto.getCost(e.setCost());
-            dto.getMaxNumberOfParticipants(e.getMaxNumberOfParticipants());
-            long bookingCount =bookingCountMap.stream()
-                    .filter(o -> o.getEventId().equalsIgnoreCase(e.getId()))
-                    .count();
-            long ratingCount =ratingCountMap.stream()
-                    .filter(o -> o.getEventId().equalsIgnoreCase(e.getId()))
-                    .count();
+            dto.setId(e.getId());
+            dto.setPublisherId(e.getPublisherId());
+            dto.setTitle(e.getTitle());
+            dto.setType(e.getType());
+            dto.setDate(e.getDate());
+            dto.setLocation(e.getLocation());
+            dto.setCost(e.getCost());
+            dto.setMaxNumberOfParticipants(e.getMaxNumberOfParticipants());
 
-            dto.getBookingCount(bookingCount);
-            dto.getBookingCount(ratingCount);
-            return  dto;
+            long bookingCount = bookingList.stream()
+                    .filter(b -> b.getEventId().equalsIgnoreCase(e.getId()))
+                    .mapToLong(Booking::getNumberOfTickets)
+                    .sum();
+
+            double ratingAverage = ratingList.stream()
+                    .filter(r -> r.getEventId().equalsIgnoreCase(e.getId()))
+                    .mapToInt(Rating::getScore)
+                    .average()
+                    .orElse(0.0);
+
+            dto.setBookingCount(bookingCount);
+            dto.setRatingCount(ratingAverage);
+            return dto;
         }).collect(Collectors.toList());
-
-
-
-
-        return result;
     }
 
 

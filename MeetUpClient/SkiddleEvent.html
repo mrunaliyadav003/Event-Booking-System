@@ -28,6 +28,8 @@
         <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
         <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
         <span id="userWelcome" style="display:none; margin-right: 10px; color: black; font-weight: bold;"></span>
+        <span id="subscriptionStatus" style="display:none; margin-right: 10px; font-weight: bold;"></span>
+        <a class="btn-getstarted" href="#" id="subscribeBtn" style="display:none;">Subscribe</a>
         <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
       </div>
 
@@ -126,6 +128,8 @@
             var location =event.venue.name ? event.venue.name : "N/A";
             var Address;// = vanueitem.address ? vanueitem.address : "N/A";
             var cost= event.ticketpricing.maxPrice ? event.ticketpricing.maxPrice : "N/A";
+            var eventLink = event.link ? event.link : "#";
+            var linkLabel = event.link ? "View on Skiddle" : "Link Unavailable";
             
 
           var eventCard ='<div class="col-md-6">  <div class="card feature-card shadow-sm mb-3">' +
@@ -139,7 +143,7 @@
               '📅 Date: ' + event.date + '<br>' +
               '💰 Cost: ' +event.currency +"  "+ cost + '<br>' +
               '</p>' +
-              '<a href="Booking.html?id=' + event.id + '" class="btn btn-success">Register</a>' +
+              '<a href="' + eventLink + '" class="btn btn-success" target="_blank" rel="noopener">' + linkLabel + '</a>' +
               '</div>' +
               '</div>' +
               '</div>' ;
@@ -153,7 +157,7 @@
 
 
       function searchEvents(lat, lon, radius, studentOnly) {
-        var url = "http://localhost:8080/skiddleEventData/search?lat=" + lat + "&lon=" + lon + "&radius=" + radius;
+        var url = "http://localhost:8081/skiddleEventData/search?lat=" + lat + "&lon=" + lon + "&radius=" + radius;
         if (studentOnly) {
           url += "&studentOnly=true";
         }
@@ -200,16 +204,22 @@ $(document).ready(function () {
 
       // Check if user is logged in
       var user = localStorage.getItem('user');
+      var currentUser = null;
       if (user) {
         user = JSON.parse(user);
+        currentUser = user;
         $('#loginBtn').hide();
         $('#eventRegisterBtn').show();
         $('#userWelcome').text('Welcome, ' + user.name).show();
+        $('#subscriptionStatus').show();
         $('#logoutBtn').show();
+        loadSubscriptionStatus(user.email);
       } else {
         $('#loginBtn').show();
         $('#eventRegisterBtn').hide();
         $('#userWelcome').hide();
+        $('#subscriptionStatus').hide();
+        $('#subscribeBtn').hide();
         $('#logoutBtn').hide();
       }
 
@@ -222,6 +232,40 @@ $(document).ready(function () {
         localStorage.removeItem('userEmail');
         alert('Logged out successfully!');
         window.location.href = 'index.html';
+      });
+
+      $('#subscribeBtn').on('click', function(e) {
+        e.preventDefault();
+        if (!currentUser || !currentUser.email) {
+          alert('Please login to subscribe.');
+          return;
+        }
+
+        var payload = {
+          name: currentUser.name,
+          emailId: currentUser.email
+        };
+
+        $.ajax({
+          url: "http://localhost:8081/students/subscribe",
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify(payload),
+          success: function(response) {
+            if (response.success) {
+              updateSubscriptionUI(true);
+            } else {
+              alert(response.message || 'Subscription failed.');
+            }
+          },
+          error: function(xhr) {
+            var errorMsg = 'Subscription failed.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMsg = xhr.responseJSON.message;
+            }
+            alert(errorMsg);
+          }
+        });
       });
 
       // Load default events (Nottingham area, student events only)
@@ -241,6 +285,31 @@ $(document).ready(function () {
       });
 
         });
+
+    function loadSubscriptionStatus(email) {
+      $.ajax({
+        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        success: function(response) {
+          var subscribed = response.data && response.data.subscribed === true;
+          updateSubscriptionUI(subscribed);
+        },
+        error: function() {
+          updateSubscriptionUI(false);
+        }
+      });
+    }
+
+    function updateSubscriptionUI(subscribed) {
+      if (subscribed) {
+        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscribeBtn').hide();
+      } else {
+        $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
+        $('#subscribeBtn').show();
+      }
+    }
 
 
     </script>

@@ -198,6 +198,30 @@ h6 {
   background: color-mix(in srgb, var(--accent-color), transparent 15%);
 }
 
+.header #authButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.header #authButtons .btn-getstarted {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.header #authButtons #userWelcome {
+  font-size: 14px;
+  color: var(--default-color);
+}
+
+.header #authButtons #subscriptionStatus {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
 @media (max-width: 1200px) {
   .header .logo {
     order: 1;

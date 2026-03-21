@@ -1,7 +1,9 @@
 package com.eventbookingapi.studentmeetup.Service;
 
 import com.eventbookingapi.studentmeetup.collection.Response;
+import com.eventbookingapi.studentmeetup.collection.Student;
 import com.eventbookingapi.studentmeetup.collection.User;
+import com.eventbookingapi.studentmeetup.repository.StudentRepository;
 import com.eventbookingapi.studentmeetup.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,11 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final StudentRepository studentRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, StudentRepository studentRepository) {
         this.userRepository = userRepository;
+        this.studentRepository = studentRepository;
     }
 
     public Response registerUser(User user) {
@@ -29,9 +33,16 @@ public class UserService {
                         .build();
             }
 
-            // Set creation timestamp
+            // Set creation timestamp and defaults
             user.setCreatedAt(LocalDateTime.now());
             user.setActive(true);
+
+            // Set default role if not specified
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                user.setRole("STUDENT");
+            }
+
+            ensureStudentSubscription(user.getName(), user.getEmail());
 
             // Save user to database
             User savedUser = userRepository.save(user);
@@ -104,5 +115,24 @@ public class UserService {
 
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    private void ensureStudentSubscription(String name, String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return;
+        }
+
+        Student student = studentRepository.findByEmailId(email)
+                .stream()
+                .findFirst()
+                .orElseGet(Student::new);
+
+        student.setEmailId(email);
+        if (name != null && !name.trim().isEmpty()) {
+            student.setName(name);
+        }
+        student.setSubscribed(true);
+
+        studentRepository.save(student);
     }
 }

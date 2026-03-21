@@ -31,6 +31,7 @@ public class AuthController {
             user.setEmail(request.getEmail());
             user.setPassword(request.getPassword());
             user.setPhone(request.getPhone());
+            user.setRole(request.getRole()); // Will default to STUDENT in UserService if null
 
             Response response = userService.registerUser(user);
             if (response.isSuccess()) {

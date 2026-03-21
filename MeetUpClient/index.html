@@ -27,7 +27,7 @@
         <ul>
           <li><a href="Event.html" class="active">Event</a></li>
           <li><a href="SkiddleEvent.html" class="active">Skiddle Event</a></li>
-
+          <li><a href="MyBookings.html" id="myBookingsLink" style="display:none;">My Bookings</a></li>
         </ul>
 
       </nav>
@@ -36,6 +36,8 @@
         <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
         <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
         <span id="userWelcome" style="display:none; margin-right: 10px; color: black; font-weight: bold;"></span>
+        <span id="subscriptionStatus" style="display:none; margin-right: 10px; font-weight: bold;"></span>
+        <a class="btn-getstarted" href="#" id="subscribeBtn" style="display:none;">Subscribe</a>
         <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
       </div>
 
@@ -94,16 +96,24 @@ $(document).ready(function () {
 
   // Check if user is logged in
   var user = localStorage.getItem('user');
+  var currentUser = null;
   if (user) {
     user = JSON.parse(user);
+    currentUser = user;
     $('#loginBtn').hide();
     $('#eventRegisterBtn').show();
+    $('#myBookingsLink').show();
     $('#userWelcome').text('Welcome, ' + user.name).show();
+    $('#subscriptionStatus').show();
     $('#logoutBtn').show();
+    loadSubscriptionStatus(user.email);
   } else {
     $('#loginBtn').show();
     $('#eventRegisterBtn').hide();
+    $('#myBookingsLink').hide();
     $('#userWelcome').hide();
+    $('#subscriptionStatus').hide();
+    $('#subscribeBtn').hide();
     $('#logoutBtn').hide();
   }
 
@@ -117,9 +127,43 @@ $(document).ready(function () {
     alert('Logged out successfully!');
     location.reload();
   });
+
+  $('#subscribeBtn').on('click', function(e) {
+    e.preventDefault();
+    if (!currentUser || !currentUser.email) {
+      alert('Please login to subscribe.');
+      return;
+    }
+
+    var payload = {
+      name: currentUser.name,
+      emailId: currentUser.email
+    };
+
+    $.ajax({
+      url: "http://localhost:8081/students/subscribe",
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      data: JSON.stringify(payload),
+      success: function(response) {
+        if (response.success) {
+          updateSubscriptionUI(true);
+        } else {
+          alert(response.message || 'Subscription failed.');
+        }
+      },
+      error: function(xhr) {
+        var errorMsg = 'Subscription failed.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMsg = xhr.responseJSON.message;
+        }
+        alert(errorMsg);
+      }
+    });
+  });
            
  $.ajax({
-      url: "http://localhost:8080/events/getAll",
+      url: "http://localhost:8081/events/getAll",
       type: "GET",
       contentType: "application/json; charset=utf-8",
       dataType: "json",
@@ -133,6 +177,38 @@ $(document).ready(function () {
     });
 
         });
+
+ function loadSubscriptionStatus(email) {
+  $.ajax({
+    url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    success: function(response) {
+      var subscribed = response.data && response.data.subscribed === true;
+      updateSubscriptionUI(subscribed);
+    },
+    error: function() {
+      updateSubscriptionUI(false);
+    }
+  });
+ }
+
+ function updateSubscriptionUI(subscribed) {
+  if (subscribed) {
+    $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+    $('#subscribeBtn').hide();
+  } else {
+    $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
+    $('#subscribeBtn').show();
+  }
+ }
+
+ function formatEventType(type) {
+  if (!type) {
+    return '';
+  }
+  return type.toLowerCase() === 'other' ? 'Social Event' : type;
+ }
 
  function bindData(response){
               
@@ -150,7 +226,7 @@ $(document).ready(function () {
             var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
              '<div class="card-body">' +
              '<h5 class="card-title">' + event.title + '</h5>' +
-             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + event.type + '</h6>' +
+             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + formatEventType(event.type) + '</h6>' +
              '<p class="card-text">' +  
               '📍 Location: ' + event.location + '<br>' +
               '📅 Date: ' + new Date(event.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +

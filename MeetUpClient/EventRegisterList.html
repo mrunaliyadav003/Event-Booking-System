@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Booking List - Student meet Upe</title>
+  <title>Index - Student meet Upe</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -20,13 +20,7 @@
         <h1 class="sitename">Meet-Up</h1>
       </a>
 
-      <nav id="navmenu" class="navmenu">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-        </ul>
-      </nav>
-
-      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
+          <a class="btn-getstarted" href="event.html">Event  </a>
 
     </div>
   </header>
@@ -35,27 +29,34 @@
 
     <!-- Page Title -->
         <div class="container">
-            <h1 class=" heading-title ">Booking List</h1>
+            <h1 class=" heading-title ">Event Register List</h1>
+            <br>
+          <button class="btn btn-primary" onclick="window.location.href='Register.html'">New Register</button>
+          <button class="btn btn-primary" onclick="window.location.href='BookingList.html'">Booking Register</button>
+                
           <table id="example" class="table table-striped" style="width:100%">
-              <thead >   
-              <tr  class="table bg-warning">
-                <th scope="col">Register Email-Id </th>
-                <th scope="col">Booking Date</th>
-                <th scope="col">Number of Tickets</th>
-                <th scope="col">Publisher Email-Id</th>
-                <th scope="col">Title</th>
-                <th scope="col">Event Date</th>
-                <th scope="col">Location</th>
-                <th scope="col">Cost</th>
-                <th scope="col">Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              </tbody>
-          </table>
+  <thead >   
+    <tr  class="table bg-warning">
+      <th scope="col">Publisher Email</th>
+      <th scope="col">Title</th>
+      <th scope="col">Event Date</th>
+      <th scope="col">Location</th>
+      <th scope="col">Cost</th>
+      <th scope="col">Max Number Of Participants</th>
+      <th scope="col">Type</th>
+      <th >Action</th>
+      
+    </tr>
+  </thead>
+  <tbody>
+    </tbody>
+</table>
+
+  
+          </div>
         </div>
      <!-- End Page Title -->
-
+  </main>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
@@ -69,10 +70,17 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>  
     <script>
+        function formatEventType(type) {
+          if (!type) {
+            return '';
+          }
+          return type.toLowerCase() === 'other' ? 'Social Event' : type;
+        }
+
         $(document).ready(function () {
            
  $.ajax({
-      url: "http://localhost:8080/Booking/getAll",
+      url: "http://localhost:8081/events/getAll",
       type: "GET",
       contentType: "application/json; charset=utf-8",
       dataType: "json",
@@ -80,15 +88,16 @@
         var content='';
           response.forEach(function(event) {
             content += '<tr>';
-            content += '<td>' + event.EmailId + '</td>';
-            content += '<td>' + new Date(event.BookingDate).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ) + '</td>';
-            content += '<td>' + event.NumberofTickets + '</td>';
             content += '<td>' + event.publisherId + '</td>';
             content += '<td>' + event.title + '</td>';
-            content += '<td>' + new Date(event.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} )+ '</td>';
+            content += '<td>' + event.date + '</td>';
             content += '<td>' + event.location + '</td>';
             content += '<td>' + event.cost + '</td>';
-            content += '<td>' + event.type + '</td>';
+            content += '<td>' + event.maxNumberOfParticipants + '</td>';
+            content += '<td>' + formatEventType(event.type) + '</td>';
+            content += '<td>';
+            content += '<a href="RegisterEdit.html?id='+event.id+'"><button class="btn btn-primary">Edit</button></a>';
+            content += '<Input type="button" onclick="deleteRecord(\''+event.id+'\')"  class="btn btn-danger" value="Delete" /></td>';
             content += '</tr>';
           });
           $('#example tbody').html(content);
@@ -103,14 +112,13 @@
         });
 
 
-        function AddRecord(id){
-                alert(JSON.stringify(id)) ;
+function deleteRecord(id){
+              //  alert(id) ;
                 $.ajax({
-                url: "http://localhost:8080/events/delete?id="+JSON.stringify(id),
-                type: "delete",
+                url: "http://localhost:8081/events/delete?id="+id,
+                type: "DELETE",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data: JSON.stringify(id),
             success: function(response) {
                 alert("Event deleted successfully!");
                 console.log("Event deleted successfully:", response);
@@ -121,7 +129,7 @@
             }
           });
           location.reload();
-             }
+        }
 
     </script>
     

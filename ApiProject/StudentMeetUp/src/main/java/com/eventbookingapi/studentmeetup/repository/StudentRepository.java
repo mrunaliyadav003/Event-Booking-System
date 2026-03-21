@@ -1,6 +1,5 @@
 package com.eventbookingapi.studentmeetup.repository;
 
-import com.eventbookingapi.studentmeetup.collection.Events;
 import com.eventbookingapi.studentmeetup.collection.Student;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -12,5 +11,5 @@ import java.util.List;
 public interface StudentRepository
         extends MongoRepository<Student, String> {
     @Query("{ 'EmailId': ?0 }")
-    List<Student> findByName(String EmailId);
+    List<Student> findByEmailId(String emailId);
 }

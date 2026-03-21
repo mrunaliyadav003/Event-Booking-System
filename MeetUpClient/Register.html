@@ -41,8 +41,8 @@
         <form>
             <div class="form-group row">
     <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-10">
-             <h1 class=" heading-title ">Edit Event Register</h1>
+    <div class="col-sm-3">
+             <h1 class=" heading-title ">Event Register</h1>
     </div>
   </div>
   <div class="form-group row">
@@ -101,6 +101,12 @@
             concert
           </label>
         </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios4" value="other">
+          <label class="form-check-label" for="gridRadios4">
+            Social Event
+          </label>
+        </div>
         <div class="form-check disabled">
           <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="etc" disabled>
           <label class="form-check-label" for="gridRadios3">
@@ -110,12 +116,10 @@
       </div>
     </div>
   </fieldset>
-          <br>
-
     <div class="form-group row">
     <label  class="col-sm-2 col-form-label"></label>
     <div class="col-sm-2">
-      <input type="button" onclick="EditRecord()" class="btn btn-primary" value="Submit">
+      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
        <input type="button"  class="btn btn-success" value="Cancel" onclick="window.location.href='EventRegisterList.html'">
     </div>
   </div>
@@ -127,7 +131,8 @@
         </div>
       </div>
      </div><!-- End Page Title -->
-
+  </main>
+<footer id="footer" class="footer">
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
@@ -139,19 +144,36 @@
   </footer>
   
   <script>
-
-  function EditRecord()
+  function AddRecord()
   
   {
-  
     var publisherId = $('#inputpublisherId').val();
     var title = $('#inputTitle').val();
-    var eventDate =$('#inputDate').val(); 
+    var eventDateValue = $('#inputDate').val();
+    if (!eventDateValue) {
+      alert("Please select an event date.");
+      return;
+    }
+    var eventDateObj = new Date(eventDateValue);
+    if (Number.isNaN(eventDateObj.getTime())) {
+      alert("Please enter a valid event date.");
+      return;
+    }
+    var eventDate = eventDateObj.toISOString();
     var location = $('#inputlocation').val();
-    var cost = $('#inputcost').val();
-    var maxNumberOfParticipants = $('#inputmaxNumberOfParticipants').val();
+    var cost = parseFloat($('#inputcost').val());
+    if (Number.isNaN(cost)) {
+      cost = 0;
+    }
+    var maxNumberOfParticipants = parseInt($('#inputmaxNumberOfParticipants').val(), 10);
     var type = $("input[name='gridRadios']:checked").val();
-    
+
+    if (!maxNumberOfParticipants || maxNumberOfParticipants < 1) {
+      alert("Please enter a valid maximum number of participants.");
+      return;
+    }
+
+  
 
     var record = {
       publisherId: publisherId,
@@ -163,20 +185,25 @@
       type: type
     };
 
+//alert(JSON.stringify(record)) ;
 
     $.ajax({
-      url: "http://localhost:8080/events/update?id=" + id,
-      type: "PUT",
+      url: "http://localhost:8081/events/create",
+      type: "POST",
       contentType: "application/json; charset=utf-8",
       dataType: "json",
       data: JSON.stringify(record),
       success: function(response) {
-        alert("Event updated successfully!");
-        console.log("Event updated successfully:", response);
+        alert("Event created successfully!");
+        console.log("Event created successfully:", response);
       },
       error: function(xhr, status, error) {
-        alert("Error updating event.");
-        console.error("Error updating event:", error);
+        var errorMsg = "Error creating event.";
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMsg = xhr.responseJSON.message;
+        }
+        alert(errorMsg);
+        console.error("Error creating event:", xhr.responseText || error);
       }
     });
   }
@@ -188,44 +215,6 @@
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
   }
 var id = getUrlParameter('id');
-LoadData(id);
-
-function LoadData(id) {
-
-      var requestUrl="http://localhost:8080/events/getById?id=" + id;
-      
-          $.ajax({
-                url: requestUrl,
-                type: "Get",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                 // alert(JSON.stringify(response));
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  alert(error);
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-function bindData(response){
-    let apiDate = new Date(response.date);
-          $('#inputpublisherId').val(response.publisherId);
-          $('#inputTitle').val(response.title);
-          $('#inputDate').val(apiDate.toISOString().split('T')[0]);
-          $('#inputlocation').val(response.location);
-          $('#inputcost').val(response.cost);
-          $('#inputmaxNumberOfParticipants').val(response.maxNumberOfParticipants);
-          $("input[name='gridRadios'][value='" + response.type + "']").prop('checked', true);
-//           $('#datepicker').datepicker('setDate', apiDate);
-
-          
-      }
-
 
 
  

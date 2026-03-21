@@ -1,0 +1,318 @@
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - Student meet Upe</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  
+  
+  
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+          
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
+        <div class="container">
+        <form>
+
+<!-- Booking Star-->
+<div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
+              <div id="myeventCard" class="event-info mb-5">
+                
+                </div>
+              <div id="weatherInfo" class="alert alert-info mt-3" style="display:none;"></div>
+ </div>
+
+<!-- Booking End -->
+            <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-3">
+             <h1 class=" heading-title ">Booking Details</h1>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Register Email-Id</label>
+    <div class="col-sm-3">
+        <label for="inputBookingemailId"></label><input type="input" class="form-control" id="inputBookingemailId" aria-describedby="emailHelpplaceholder=" Enter Register Email-id ">
+    </div>
+  </div>
+<br>
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Number of Tickets</label>
+    <div class="col-sm-3">
+       <select name="quantity" id="quantity" class="form-control" required="">
+                    <option value="1">1 Ticket</option>
+                  </select>
+    </div>
+  </div>
+<br>
+
+  
+  
+                <div class="form-group row">
+    <label  class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-3">
+      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+      <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+    </div>
+  </div>
+<div style="display:none;"  >  
+  <input type="hidden" id="eventId" value="">
+  <input  id="eventTitle" value="">
+  <input  id="eventType" value="">
+  <input  id="eventDate" value="">
+  <input  id="eventLocation" value="">
+  <input  id="eventCost" value="">
+  <input type="hidden" id="eventpublisherId" value="">
+</div>
+</div>
+</form>
+
+  
+          </div>
+        </div>
+      </div>
+     </div><!-- End Page Title -->
+  </main>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali 
+        
+      </div>
+    </div>
+
+  </footer>
+  
+  <script>
+
+    // Check if user is logged in
+    $(document).ready(function () {
+      if (!localStorage.getItem('user')) {
+        alert('Please login to book events');
+        window.location.href = 'Login.html';
+        return;
+      }
+
+      // Pre-fill email from logged in user
+      var user = JSON.parse(localStorage.getItem('user'));
+      $('#inputBookingemailId').val(user.email);
+      $('#inputBookingemailId').prop('readonly', true);
+    });
+
+     function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
+var id = getUrlParameter('id');
+LoadData(id);
+
+    function LoadData(id) {
+
+      var requestUrl="http://localhost:8081/events/getById?id=" + id;
+      
+          $.ajax({
+                url: requestUrl,
+                type: "Get",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(response) {
+                 // alert(JSON.stringify(response));
+                  bindData(response);
+                  console.log("Event Get data successfully:", response);
+                },
+                error: function(xhr, status, error) {
+                  alert(error);
+                  console.error("Error getting data for events:", error);
+                }
+              });
+
+      }
+
+
+   function formatEventType(type) {
+        if (!type) {
+          return '';
+        }
+        return type.toLowerCase() === 'other' ? 'Social Event' : type;
+      }
+
+   function bindData(response){
+        var content='';
+          var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
+             '<div class="card-body">' +
+             '<h2 class="card-title">' + response.title + '</h2>' +
+           //  '<h6 class="card-subtitle mb-2 text-muted">Type: ' + response.type + '</h6>' +   
+              '<p class="card-text">' + 
+                '👥 Type: ' + formatEventType(response.type) +  '<br>' +
+                '📍 Location: ' + response.location + '<br>' 
+                + '📅 Date: ' + new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
+                '💰 Cost: ' + response.cost + '<br>' +
+              //  '👥 Max Participants: ' + response.maxNumberOfParticipants +
+                '</p>' +
+                '</div>' +
+                '</div>' +
+                '</div>' ;
+  
+                content += eventCard;
+                $('#eventId').val(response.id);
+                $('#eventTitle').val(response.title);
+                $('#eventType').val(response.type);
+                $('#eventDate').val(response.date); 
+              //  $('#eventDate').val(new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ));
+                $('#eventLocation').val(response.location);
+                $('#eventCost').val(response.cost); 
+                $('#eventpublisherId').val(response.publisherId);
+
+                loadWeather(response.location, response.date);
+              
+        $('#myeventCard').html(content);
+
+      }
+
+function loadWeather(location, dateValue) {
+  if (!location) {
+    return;
+  }
+
+  var dateStr = '';
+  if (dateValue) {
+    try {
+      dateStr = new Date(dateValue).toISOString().split('T')[0];
+    } catch (e) {
+      dateStr = '';
+    }
+  }
+
+  var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+  if (dateStr) {
+    url += "&date=" + dateStr;
+  }
+
+  $.ajax({
+    url: url,
+    type: "GET",
+    contentType: "application/json; charset=utf-8",
+    success: function(info) {
+      var message = "Weather for " + info.location + " on " + info.date + ": ";
+      if (info.temperatureMin != null && info.temperatureMax != null) {
+        message += info.temperatureMin + " C to " + info.temperatureMax + " C";
+      } else {
+        message += "Temperature data unavailable";
+      }
+      if (info.precipitationProbability != null) {
+        message += " | Precipitation " + info.precipitationProbability + "%";
+      }
+      $('#weatherInfo').text(message).show();
+    },
+    error: function(xhr) {
+      var errorMsg = "Weather data unavailable for this location.";
+      if (xhr.responseJSON && xhr.responseJSON.error) {
+        errorMsg = xhr.responseJSON.error;
+      }
+      $('#weatherInfo').text(errorMsg).show();
+    }
+  });
+}
+
+function AddRecord()
+  {
+            var email = $('#inputBookingemailId').val();
+            var quantity = parseInt($('#quantity').val(), 10);
+            var eventId = getUrlParameter('id');
+            var bookingDate = new Date().toISOString();
+          
+            var Title = $('#eventTitle').val();
+            var Type = $('#eventType').val();
+            var dateValue = $('#eventDate').val();
+            var date = dateValue;
+            if (dateValue) {
+              var parsedDate = new Date(dateValue);
+              if (!Number.isNaN(parsedDate.getTime())) {
+                date = parsedDate.toISOString();
+              }
+            }
+            var location = $('#eventLocation').val(); 
+            var cost = $('#eventCost').val();
+            var publisherId = $('#eventpublisherId').val();
+
+
+         if (!email) {
+            alert("Email is required.");
+            return;
+         }
+         if (!quantity || quantity < 1) {
+            alert("Please select at least 1 ticket.");
+            return;
+         }
+
+         var requestData = {
+            eventId: eventId,
+            emailId: email,
+            publisherId:publisherId,
+            bookingDate: bookingDate,
+            numberOfTickets: quantity,
+            sequenceNo: 1,
+            title: Title,
+            type: Type,
+            date: date , 
+            location: location,
+            cost: cost
+            };
+
+    //alert(JSON.stringify(requestData));
+      var reqData=JSON.stringify(requestData);
+     // alert(reqData);
+        $.ajax({
+      url: "http://localhost:8081/Booking/create",
+      type: "POST",
+      contentType: "application/json; charset=utf-8",
+      data: reqData,
+      success: function(response) {
+        if (response.success) {
+          alert("Booking created successfully!");
+          console.log("Booking created successfully:", response);
+          window.location.href = 'MyBookings.html';
+        } else {
+          alert("Booking failed: " + response.message);
+          console.error("Booking failed:", response.message);
+        }
+      },
+      error: function(xhr, status, error) {
+        var errorMsg = "Error creating booking.";
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMsg = xhr.responseJSON.message;
+        }
+        alert(errorMsg);
+        console.error("Error creating booking:", error);
+      }
+    });
+
+    
+  }
+
+
+  </script>
+    
+</body>
+
+</html>

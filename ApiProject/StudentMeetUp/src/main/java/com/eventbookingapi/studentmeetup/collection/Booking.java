@@ -18,12 +18,12 @@ import java.util.Date;
 public class Booking {
     @Id
     private String id;
-    private String EventId;
-    private String EmailId;
+    private String eventId;
+    private String emailId;
     private String publisherId;
-    private Date BookingDate;
-    private int NumberofTickets;
-    private int SequenceNo;
+    private Date bookingDate;
+    private int numberOfTickets;
+    private int sequenceNo;
     private String title;
     private String type;
     private Date date;

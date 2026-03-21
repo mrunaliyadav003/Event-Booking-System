@@ -4,11 +4,15 @@ import com.eventbookingapi.studentmeetup.collection.Booking;
 import com.eventbookingapi.studentmeetup.collection.EventDTO;
 import com.eventbookingapi.studentmeetup.collection.Events;
 import com.eventbookingapi.studentmeetup.collection.Rating;
+import com.eventbookingapi.studentmeetup.collection.Student;
 import com.eventbookingapi.studentmeetup.repository.BookingRepository;
 import com.eventbookingapi.studentmeetup.repository.EventPublisherRepository;
 import com.eventbookingapi.studentmeetup.repository.RatingRepository;
+import com.eventbookingapi.studentmeetup.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -27,15 +31,46 @@ public class EventPublisherController {
     @Autowired
     private BookingRepository  bookingRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
     @PostMapping("create")
-    public Events create(@RequestBody Events request) {
-                return eventPublisherRepository.save(request);
+    public ResponseEntity<?> create(@RequestBody Events request) {
+        String validationError = validateEvent(request);
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("message", validationError));
+        }
+        if (!isSubscribed(request.getPublisherId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Subscription required to publish events"));
+        }
+
+        try {
+            return ResponseEntity.ok(eventPublisherRepository.save(request));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error saving event: " + e.getMessage()));
+        }
     }
 
     @PutMapping("update")
-    public Events Update(String id,@RequestBody Events request) {
+    public ResponseEntity<?> update(@RequestParam String id, @RequestBody Events request) {
         request.setId(id);
-        return eventPublisherRepository.save(request);
+        String validationError = validateEvent(request);
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("message", validationError));
+        }
+        if (!isSubscribed(request.getPublisherId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("message", "Subscription required to publish events"));
+        }
+
+        try {
+            return ResponseEntity.ok(eventPublisherRepository.save(request));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Error updating event: " + e.getMessage()));
+        }
     }
 
     @GetMapping("getAll")
@@ -69,7 +104,7 @@ public class EventPublisherController {
 
             long bookingCount = (long) BookingList.stream()
                     .filter(o -> Objects.equals(o.getEventId(), eventId))
-                    .mapToDouble(Booking::getNumberofTickets)
+                    .mapToDouble(Booking::getNumberOfTickets)
                      .sum();
 
            //  OptionalDouble ratingSum = RatingList.stream()
@@ -77,10 +112,11 @@ public class EventPublisherController {
              //        .mapToDouble(Rating::getScore) // convert to DoubleStream
              //        .reduce(Double::sum); // returns OptionalDouble
 
-             OptionalDouble averageScore = RatingList.stream()
+             double averageScore = RatingList.stream()
                      .filter(r -> Objects.equals(r.getEventId(), eventId)) // filter by eventId
                      .mapToDouble(Rating::getScore) // extract score
-                     .average(); // compute average
+                     .average()
+                     .orElse(0.0); // compute average
 
             dto.setBookingCount(bookingCount);
             dto.setRatingCount(averageScore);
@@ -91,19 +127,19 @@ public class EventPublisherController {
     }
 
     @GetMapping("getById")
-    public Events getById( String id) {
+    public Events getById(@RequestParam String id) {
         Events item = new Events();
         item= eventPublisherRepository.findById(id).get();
         return item;
     }
 
     @DeleteMapping("delete")
-    public String delete( String id) {
+    public String delete(@RequestParam String id) {
         eventPublisherRepository.deleteById(id);
     return "Deleted Successfully";
     }
     @GetMapping("SeachByText")
-    public List<EventDTO> searchByText(String text) {
+    public List<EventDTO> searchByText(@RequestParam String text) {
        List<Events> events = eventPublisherRepository.searchByText(text);
 
        return GetEventDtoData(events);
@@ -119,13 +155,13 @@ public class EventPublisherController {
     }
 
     @GetMapping("getType")
-    public List<EventDTO> getByType(String type) {
+    public List<EventDTO> getByType(@RequestParam String type) {
         List<Events> events =eventPublisherRepository.getByType(type);
         return GetEventDtoData(events);
     }
 
     @GetMapping("getLocation")
-    public List<EventDTO> getByLocation(String location) {
+    public List<EventDTO> getByLocation(@RequestParam String location) {
         List<Events> events =eventPublisherRepository.getByLocation(location);
         return GetEventDtoData(events);
     }
@@ -153,7 +189,7 @@ public class EventPublisherController {
 
                 long bookingCount = (long) BookingList.stream()
                         .filter(o -> Objects.equals(o.getEventId(), eventId))
-                        .mapToDouble(Booking::getNumberofTickets)
+                        .mapToDouble(Booking::getNumberOfTickets)
                         .sum();
 
                 //  OptionalDouble ratingSum = RatingList.stream()
@@ -161,10 +197,11 @@ public class EventPublisherController {
                 //        .mapToDouble(Rating::getScore) // convert to DoubleStream
                 //        .reduce(Double::sum); // returns OptionalDouble
 
-                OptionalDouble averageScore = RatingList.stream()
+                double averageScore = RatingList.stream()
                         .filter(r -> Objects.equals(r.getEventId(), eventId)) // filter by eventId
                         .mapToDouble(Rating::getScore) // extract score
-                        .average(); // compute average
+                        .average()
+                        .orElse(0.0); // compute average
 
                 dto.setBookingCount(bookingCount);
                 dto.setRatingCount(averageScore);
@@ -174,4 +211,54 @@ public class EventPublisherController {
         return result;
     }
 
+    private String validateEvent(Events request) {
+        if (request == null) {
+            return "Event payload is required";
+        }
+        if (isBlank(request.getPublisherId())) {
+            return "Publisher ID is required";
+        }
+        if (isBlank(request.getTitle())) {
+            return "Title is required";
+        }
+        if (isBlank(request.getType())) {
+            return "Type is required";
+        }
+        if (request.getDate() == null) {
+            return "Event date is required";
+        }
+        if (isBlank(request.getLocation())) {
+            return "Location is required";
+        }
+        if (request.getCost() == null || request.getCost() < 0) {
+            return "Cost must be 0 or more";
+        }
+        if (request.getMaxNumberOfParticipants() == null || request.getMaxNumberOfParticipants() < 1) {
+            return "Max number of participants must be at least 1";
+        }
+
+        String normalizedType = request.getType().trim().toLowerCase(Locale.ROOT);
+        if (!normalizedType.equals("sport") && !normalizedType.equals("concert") && !normalizedType.equals("other")) {
+            return "Type must be sport, concert, or other";
+        }
+
+        return null;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private boolean isSubscribed(String emailId) {
+        if (isBlank(emailId)) {
+            return false;
+        }
+        return studentRepository.findByEmailId(emailId)
+                .stream()
+                .anyMatch(this::isStudentSubscribed);
+    }
+
+    private boolean isStudentSubscribed(Student student) {
+        return student != null && Boolean.TRUE.equals(student.getSubscribed());
+    }
 }

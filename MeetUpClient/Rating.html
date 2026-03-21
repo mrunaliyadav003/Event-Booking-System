@@ -1,7 +1,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Student meet Upe</title>
+  <title>Rating & Feedback - Student meet Up</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
 <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -43,21 +43,33 @@
             <div class="form-group row">
     <label  class="col-sm-2 col-form-label"></label>
     <div class="col-sm-3">
-             <h1 class=" heading-title ">Booking Details</h1>
+             <h1 class=" heading-title ">Rating & Feedback</h1>
     </div>
   </div>
+
   <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Register Email-Id</label>
+    <label  class="col-sm-2 col-form-label">Your EmailId</label>
     <div class="col-sm-3">
-        <label for="inputBookingemailId"></label><input type="input" class="form-control" id="inputBookingemailId" aria-describedby="emailHelpplaceholder=" Enter Register Email-id ">
+      <input type="input" class="form-control" id="inputstudentId">
+    </div>
+  </div>
+
+    <div class="form-group row">
+    <label  class="col-sm-2 col-form-label">Your Feedback</label>
+    <div class="col-sm-3">
+      <input type="input" class="form-control" id="inputcomment">
     </div>
   </div>
 <br>
     <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Number of Tickets</label>
+    <label  class="col-sm-2 col-form-label">Rating</label>
     <div class="col-sm-3">
-       <select name="quantity" id="quantity" class="form-control" required="">
-                    <option value="1">1 Ticket</option>
+       <select name="Rating" id="Rating" class="form-control" required="">
+                    <option value="1">1 </option>
+                    <option value="2">2 </option>
+                    <option value="3">3 </option>
+                    <option value="4">4 </option>
+                    <option value="5">5 </option>
                   </select>
     </div>
   </div>
@@ -74,11 +86,7 @@
   </div>
 <div style="display:none;"  >  
   <input type="hidden" id="eventId" value="">
-  <input  id="eventTitle" value="">
-  <input  id="eventType" value="">
-  <input  id="eventDate" value="">
-  <input  id="eventLocation" value="">
-  <input  id="eventCost" value="">
+  <input  id="studentId" value="">
   <input type="hidden" id="eventpublisherId" value="">
 </div>
 </div>
@@ -102,18 +110,14 @@
   
   <script>
 
-    // Check if user is logged in
+    // Check if user is logged in and pre-fill email
     $(document).ready(function () {
-      if (!localStorage.getItem('user')) {
-        alert('Please login to book events');
-        window.location.href = 'Login.html';
-        return;
+      var user = localStorage.getItem('user');
+      if (user) {
+        user = JSON.parse(user);
+        $('#inputstudentId').val(user.email);
+        $('#inputstudentId').prop('readonly', true);
       }
-
-      // Pre-fill email from logged in user
-      var user = JSON.parse(localStorage.getItem('user'));
-      $('#inputBookingemailId').val(user.email);
-      $('#inputBookingemailId').prop('readonly', true);
     });
 
      function getUrlParameter(name) {
@@ -127,7 +131,7 @@ LoadData(id);
 
     function LoadData(id) {
 
-      var requestUrl="http://localhost:8080/events/getById?id=" + id;
+      var requestUrl="http://localhost:8081/events/getById?id=" + id;
       
           $.ajax({
                 url: requestUrl,
@@ -148,6 +152,13 @@ LoadData(id);
       }
 
 
+   function formatEventType(type) {
+        if (!type) {
+          return '';
+        }
+        return type.toLowerCase() === 'other' ? 'Social Event' : type;
+      }
+
    function bindData(response){
         var content='';
           var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
@@ -155,7 +166,7 @@ LoadData(id);
              '<h2 class="card-title">' + response.title + '</h2>' +
            //  '<h6 class="card-subtitle mb-2 text-muted">Type: ' + response.type + '</h6>' +   
               '<p class="card-text">' + 
-                '👥 Type: ' + response.type +  '<br>' +
+                '👥 Type: ' + formatEventType(response.type) +  '<br>' +
                 '📍 Location: ' + response.location + '<br>' 
                 + '📅 Date: ' + new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
                 '💰 Cost: ' + response.cost + '<br>' +
@@ -167,13 +178,8 @@ LoadData(id);
   
                 content += eventCard;
                 $('#eventId').val(response.id);
-                $('#eventTitle').val(response.title);
-                $('#eventType').val(response.type);
-                $('#eventDate').val(response.date); 
               //  $('#eventDate').val(new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ));
-                $('#eventLocation').val(response.location);
-                $('#eventCost').val(response.cost); 
-                $('#eventpublisherId').val(response.publisherId);
+
 
                 
               
@@ -184,54 +190,48 @@ LoadData(id);
 
 function AddRecord()
   {
-            var email = $('#inputBookingemailId').val();
-            var quantity = $('#quantity').val();
-            var eventId = getUrlParameter('id');
-            var bookingDate=new Date().toISOString().split('T')[0];
-          
-            var Title = $('#eventTitle').val();
-            var Type = $('#eventType').val();
-            var date = $('#eventDate').val();
-            var location = $('#eventLocation').val(); 
-            var cost = $('#eventCost').val();
-            var publisherId = $('#eventpublisherId').val();
+            var StudentId = $('#inputstudentId').val();
+            var Comment = $('#inputcomment').val();
+            var EventId = getUrlParameter('id');
+            var RatingScore = parseInt($('#Rating').val(), 10);
+            var RatingDate = new Date().toISOString();
 
+            // Validate inputs
+            if (!StudentId || !Comment || !EventId) {
+              alert("Please fill in all fields");
+              return;
+            }
+            if (!RatingScore || RatingScore < 1 || RatingScore > 5) {
+              alert("Please select a rating between 1 and 5");
+              return;
+            }
 
-         var requestData = {
-            EventId: eventId,
-            EmailId: email,
-            publisherId:publisherId,
-            BookingDate: bookingDate,
-            NumberofTickets: quantity,
-            SequenceNo: 1,
-            title: Title,
-            type: Type,
-            date: date , 
-            location: location,
-            cost: cost
+            var requestData = {
+              eventId: EventId,
+              studentId: StudentId,
+              score: RatingScore,
+              comment: Comment,
+              ratingDate: RatingDate
             };
 
-    //alert(JSON.stringify(requestData));
-      var reqData=JSON.stringify(requestData);
-     // alert(reqData);
-        $.ajax({
-      url: "http://localhost:8080/Booking/create",
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: reqData,
-      headers: {'Accept': '*/*'}, 
-      success: function(response) {
-        alert("Booking created successfully!");
-        console.log("Booking created successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        alert("Error creating booking.");
-        console.error("Error creating booking:", error);
-      }
-    });
+            console.log("Submitting rating:", JSON.stringify(requestData));
 
-    
+            $.ajax({
+              url: "http://localhost:8081/Rating/create",
+              type: "POST",
+              contentType: "application/json; charset=utf-8",
+              dataType: "json",
+              data: JSON.stringify(requestData),
+              success: function(response) {
+                alert("Feedback submitted successfully!");
+                console.log("Feedback submitted successfully:", response);
+                window.location.href = 'Event.html';
+              },
+              error: function(xhr, status, error) {
+                alert("Error submitting Feedback: " + error);
+                console.error("Error submitting Feedback:", xhr.responseText);
+              }
+            });
   }
 
 

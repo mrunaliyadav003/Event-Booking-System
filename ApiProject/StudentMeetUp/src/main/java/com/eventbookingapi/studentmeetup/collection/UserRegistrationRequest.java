@@ -8,4 +8,5 @@ public class UserRegistrationRequest {
     private String email;
     private String password;
     private String phone;
+    private String role; // Optional: STUDENT or ADMIN (defaults to STUDENT if not provided)
 }

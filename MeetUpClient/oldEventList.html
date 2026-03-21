@@ -20,7 +20,9 @@
         <h1 class="sitename">Meet-Up</h1>
       </a>
 
-          <a class="btn-getstarted" href="event.html">Event  </a>
+     
+
+      <a class="btn-getstarted" href="event.html">Event  </a>
 
     </div>
   </header>
@@ -28,12 +30,9 @@
   <main class="main">
 
     <!-- Page Title -->
+    <div class="page-title">
+      <div class="heading">
         <div class="container">
-            <h1 class=" heading-title ">Event Register List</h1>
-            <br>
-          <button class="btn btn-primary" onclick="window.location.href='Register.html'">New Register</button>
-          <button class="btn btn-primary" onclick="window.location.href='BookingList.html'">Booking Register</button>
-                
           <table id="example" class="table table-striped" style="width:100%">
   <thead >   
     <tr  class="table bg-warning">
@@ -55,8 +54,9 @@
   
           </div>
         </div>
-     <!-- End Page Title -->
-  </main>
+      </div>
+     </div><!-- End Page Title -->
+
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
       <div class="credits">
@@ -73,7 +73,7 @@
         $(document).ready(function () {
            
  $.ajax({
-      url: "http://localhost:8080/events/getAll",
+      url: "http://localhost:8081/events/getAll",
       type: "GET",
       contentType: "application/json; charset=utf-8",
       dataType: "json",
@@ -90,7 +90,7 @@
             content += '<td>' + event.type + '</td>';
             content += '<td>';
             content += '<a href="RegisterEdit.html?id='+event.id+'"><button class="btn btn-primary">Edit</button></a>';
-            content += '<Input type="button" onclick="deleteRecord(\''+event.id+'\')"  class="btn btn-danger" value="Delete" /></td>';
+            content += '<Input type="button" onclick="AddRecord(\''+event.id+'\')"  class="btn btn-danger" value="Delete" /></td>';
             content += '</tr>';
           });
           $('#example tbody').html(content);
@@ -105,13 +105,14 @@
         });
 
 
-function deleteRecord(id){
-              //  alert(id) ;
+        function AddRecord(id){
+                alert(JSON.stringify(id)) ;
                 $.ajax({
-                url: "http://localhost:8080/events/delete?id="+id,
-                type: "DELETE",
+                url: "http://localhost:8081/events/delete?id="+JSON.stringify(id),
+                type: "delete",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                data: JSON.stringify(id),
             success: function(response) {
                 alert("Event deleted successfully!");
                 console.log("Event deleted successfully:", response);
@@ -122,7 +123,7 @@ function deleteRecord(id){
             }
           });
           location.reload();
-        }
+             }
 
     </script>
     

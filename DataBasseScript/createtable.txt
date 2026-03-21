@@ -36,9 +36,9 @@ db.createCollection("Rating", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["studnetId", "eventId"],
+      required: ["studentId", "eventId"],
       properties: {
-        studnetId: { bsonType: "string" },
+        studentId: { bsonType: "string" },
         eventId: { bsonType: "string" },
         score: { bsonType: "number", minimum: 0 },
         comment: { bsonType: "string" },
@@ -49,11 +49,11 @@ db.createCollection("Rating", {
 });
 
 
-private String EventId;
-    private String EmailId;
-    private Date BookingDate;
-    private int NumberofTickets;
-    private int SequenceNo;
+private String eventId;
+    private String emailId;
+    private Date bookingDate;
+    private int numberOfTickets;
+    private int sequenceNo;
 
     private String publisherId;
     private String title;
@@ -67,13 +67,13 @@ db.createCollection("Booking", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["EventId", "EmailId","BookingDate"],
+      required: ["eventId", "emailId","bookingDate","numberOfTickets","sequenceNo"],
       properties: {
-        EventId: { bsonType: "string" },
-        EmailId: { bsonType: "string" },
-	BookingDate: { bsonType: "date" },
-	NumberofTickets: { bsonType: "int", minimum: 1 },
- 	SequenceNo: { bsonType: "int", minimum: 1 },
+        eventId: { bsonType: "string" },
+        emailId: { bsonType: "string" },
+	bookingDate: { bsonType: "date" },
+	numberOfTickets: { bsonType: "int", minimum: 1 },
+ 	sequenceNo: { bsonType: "int", minimum: 1 },
 	 publisherId: { bsonType: "string" },
         title: { bsonType: "string" },
         type: { enum: ["sport", "concert", "other"] },
