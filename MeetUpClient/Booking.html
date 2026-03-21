@@ -1,318 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Student meet Upe</title>
+  <!-- Fix 3: Proper app name -->
+  <title>Meet-Up | Book Event</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
-<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  
-  
-  
+  <style>
+    /* Fix 2: Clean weather display replacing "Location not found" */
+    .weather-display {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #e8f4fd;
+      border: 1px solid #b3d9f5;
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin: 12px 0;
+      color: #1565a8;
+      font-size: 14px;
+    }
+    .weather-display .weather-icon {
+      font-size: 26px;
+    }
+    .weather-display .weather-text strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+    .weather-display .weather-text span {
+      font-size: 13px;
+      color: #2d7ab5;
+    }
+  </style>
 </head>
 <body class="terms-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-          
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
       <div class="heading">
         <div class="container">
-        <form>
+          <form>
+            <!-- Event info -->
+            <div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
+              <div id="myeventCard" class="event-info mb-3"></div>
 
-<!-- Booking Star-->
-<div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
-              <div id="myeventCard" class="event-info mb-5">
-                
+              <!-- Fix 2: Proper weather display -->
+              <div id="weatherInfo" class="weather-display" style="display:none;">
+                <div class="weather-icon">🌤</div>
+                <div class="weather-text">
+                  <strong id="weatherTitle">Loading weather...</strong>
+                  <span id="weatherDesc"></span>
                 </div>
-              <div id="weatherInfo" class="alert alert-info mt-3" style="display:none;"></div>
- </div>
+              </div>
+            </div>
 
-<!-- Booking End -->
             <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-3">
-             <h1 class=" heading-title ">Booking Details</h1>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Register Email-Id</label>
-    <div class="col-sm-3">
-        <label for="inputBookingemailId"></label><input type="input" class="form-control" id="inputBookingemailId" aria-describedby="emailHelpplaceholder=" Enter Register Email-id ">
-    </div>
-  </div>
-<br>
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Number of Tickets</label>
-    <div class="col-sm-3">
-       <select name="quantity" id="quantity" class="form-control" required="">
-                    <option value="1">1 Ticket</option>
-                  </select>
-    </div>
-  </div>
-<br>
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-3">
+                <h1 class="heading-title">Booking Details</h1>
+              </div>
+            </div>
 
-  
-  
-                <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-3">
-      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
-      <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
-    </div>
-  </div>
-<div style="display:none;"  >  
-  <input type="hidden" id="eventId" value="">
-  <input  id="eventTitle" value="">
-  <input  id="eventType" value="">
-  <input  id="eventDate" value="">
-  <input  id="eventLocation" value="">
-  <input  id="eventCost" value="">
-  <input type="hidden" id="eventpublisherId" value="">
-</div>
-</div>
-</form>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Register Email-Id</label>
+              <div class="col-sm-3">
+                <input type="email" class="form-control" id="inputBookingemailId" placeholder="Enter Register Email-id">
+              </div>
+            </div>
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Number of Tickets</label>
+              <div class="col-sm-3">
+                <select name="quantity" id="quantity" class="form-control" required="">
+                  <option value="1">1 Ticket</option>
+                </select>
+              </div>
+            </div>
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-3">
+                <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+                <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+              </div>
+            </div>
 
-  
-          </div>
+            <div style="display:none;">
+              <input type="hidden" id="eventId" value="">
+              <input id="eventTitle" value="">
+              <input id="eventType" value="">
+              <input id="eventDate" value="">
+              <input id="eventLocation" value="">
+              <input id="eventCost" value="">
+              <input type="hidden" id="eventpublisherId" value="">
+            </div>
+          </form>
         </div>
       </div>
-     </div><!-- End Page Title -->
-  </main>
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
-      </div>
     </div>
+  </main>
 
-  </footer>
-  
+  <div class="container copyright text-center mt-4">
+    <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+    <div class="credits">Designed by Mrunali</div>
+  </div>
+
   <script>
-
-    // Check if user is logged in
     $(document).ready(function () {
       if (!localStorage.getItem('user')) {
         alert('Please login to book events');
         window.location.href = 'Login.html';
         return;
       }
-
-      // Pre-fill email from logged in user
       var user = JSON.parse(localStorage.getItem('user'));
       $('#inputBookingemailId').val(user.email);
       $('#inputBookingemailId').prop('readonly', true);
     });
 
-     function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }
-var id = getUrlParameter('id');
-LoadData(id);
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    var id = getUrlParameter('id');
+    LoadData(id);
 
     function LoadData(id) {
-
-      var requestUrl="http://localhost:8081/events/getById?id=" + id;
-      
-          $.ajax({
-                url: requestUrl,
-                type: "Get",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                 // alert(JSON.stringify(response));
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  alert(error);
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-
-   function formatEventType(type) {
-        if (!type) {
-          return '';
-        }
-        return type.toLowerCase() === 'other' ? 'Social Event' : type;
-      }
-
-   function bindData(response){
-        var content='';
-          var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
-             '<div class="card-body">' +
-             '<h2 class="card-title">' + response.title + '</h2>' +
-           //  '<h6 class="card-subtitle mb-2 text-muted">Type: ' + response.type + '</h6>' +   
-              '<p class="card-text">' + 
-                '👥 Type: ' + formatEventType(response.type) +  '<br>' +
-                '📍 Location: ' + response.location + '<br>' 
-                + '📅 Date: ' + new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
-                '💰 Cost: ' + response.cost + '<br>' +
-              //  '👥 Max Participants: ' + response.maxNumberOfParticipants +
-                '</p>' +
-                '</div>' +
-                '</div>' +
-                '</div>' ;
-  
-                content += eventCard;
-                $('#eventId').val(response.id);
-                $('#eventTitle').val(response.title);
-                $('#eventType').val(response.type);
-                $('#eventDate').val(response.date); 
-              //  $('#eventDate').val(new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ));
-                $('#eventLocation').val(response.location);
-                $('#eventCost').val(response.cost); 
-                $('#eventpublisherId').val(response.publisherId);
-
-                loadWeather(response.location, response.date);
-              
-        $('#myeventCard').html(content);
-
-      }
-
-function loadWeather(location, dateValue) {
-  if (!location) {
-    return;
-  }
-
-  var dateStr = '';
-  if (dateValue) {
-    try {
-      dateStr = new Date(dateValue).toISOString().split('T')[0];
-    } catch (e) {
-      dateStr = '';
+      $.ajax({
+        url: "http://localhost:8081/events/getById?id=" + id,
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: function(response) { bindData(response); },
+        error: function(xhr, status, error) { alert(error); console.error("Error:", error); }
+      });
     }
-  }
 
-  var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
-  if (dateStr) {
-    url += "&date=" + dateStr;
-  }
-
-  $.ajax({
-    url: url,
-    type: "GET",
-    contentType: "application/json; charset=utf-8",
-    success: function(info) {
-      var message = "Weather for " + info.location + " on " + info.date + ": ";
-      if (info.temperatureMin != null && info.temperatureMax != null) {
-        message += info.temperatureMin + " C to " + info.temperatureMax + " C";
-      } else {
-        message += "Temperature data unavailable";
-      }
-      if (info.precipitationProbability != null) {
-        message += " | Precipitation " + info.precipitationProbability + "%";
-      }
-      $('#weatherInfo').text(message).show();
-    },
-    error: function(xhr) {
-      var errorMsg = "Weather data unavailable for this location.";
-      if (xhr.responseJSON && xhr.responseJSON.error) {
-        errorMsg = xhr.responseJSON.error;
-      }
-      $('#weatherInfo').text(errorMsg).show();
+    function formatEventType(type) {
+      if (!type) return '';
+      return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
-  });
-}
 
-function AddRecord()
-  {
-            var email = $('#inputBookingemailId').val();
-            var quantity = parseInt($('#quantity').val(), 10);
-            var eventId = getUrlParameter('id');
-            var bookingDate = new Date().toISOString();
-          
-            var Title = $('#eventTitle').val();
-            var Type = $('#eventType').val();
-            var dateValue = $('#eventDate').val();
-            var date = dateValue;
-            if (dateValue) {
-              var parsedDate = new Date(dateValue);
-              if (!Number.isNaN(parsedDate.getTime())) {
-                date = parsedDate.toISOString();
-              }
-            }
-            var location = $('#eventLocation').val(); 
-            var cost = $('#eventCost').val();
-            var publisherId = $('#eventpublisherId').val();
+    function bindData(response) {
+      var eventCard =
+        '<div class="col-md-8"><div class="card feature-card shadow-sm mb-3"><div class="card-body">' +
+        '<h2 class="card-title">' + response.title + '</h2>' +
+        '<p class="card-text">' +
+        '👥 Type: ' + formatEventType(response.type) + '<br>' +
+        '📍 Location: ' + response.location + '<br>' +
+        '📅 Date: ' + new Date(response.date).toLocaleDateString("nl", {day:"2-digit", month:"2-digit", year:"numeric"}) + '<br>' +
+        '💰 Cost: ' + (response.cost == 0 ? 'Free' : response.cost) +
+        '</p></div></div></div>';
 
+      $('#myeventCard').html(eventCard);
+      $('#eventId').val(response.id);
+      $('#eventTitle').val(response.title);
+      $('#eventType').val(response.type);
+      $('#eventDate').val(response.date);
+      $('#eventLocation').val(response.location);
+      $('#eventCost').val(response.cost);
+      $('#eventpublisherId').val(response.publisherId);
 
-         if (!email) {
-            alert("Email is required.");
-            return;
-         }
-         if (!quantity || quantity < 1) {
-            alert("Please select at least 1 ticket.");
-            return;
-         }
+      loadWeather(response.location, response.date);
+    }
 
-         var requestData = {
-            eventId: eventId,
-            emailId: email,
-            publisherId:publisherId,
-            bookingDate: bookingDate,
-            numberOfTickets: quantity,
-            sequenceNo: 1,
-            title: Title,
-            type: Type,
-            date: date , 
-            location: location,
-            cost: cost
-            };
-
-    //alert(JSON.stringify(requestData));
-      var reqData=JSON.stringify(requestData);
-     // alert(reqData);
-        $.ajax({
-      url: "http://localhost:8081/Booking/create",
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      data: reqData,
-      success: function(response) {
-        if (response.success) {
-          alert("Booking created successfully!");
-          console.log("Booking created successfully:", response);
-          window.location.href = 'MyBookings.html';
-        } else {
-          alert("Booking failed: " + response.message);
-          console.error("Booking failed:", response.message);
+    // Fix 2: Clean weather display
+    function loadWeather(location, dateValue) {
+      if (!location) return;
+      var dateStr = '';
+      if (dateValue) { try { dateStr = new Date(dateValue).toISOString().split('T')[0]; } catch(e){} }
+      var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+      if (dateStr) url += "&date=" + dateStr;
+      $.ajax({
+        url: url, type: "GET",
+        success: function(info) {
+          var title = "📍 " + info.location + (info.date ? "  ·  " + info.date : "");
+          var desc = "";
+          if (info.temperatureMin != null && info.temperatureMax != null)
+            desc += "🌡 " + info.temperatureMin + "°C – " + info.temperatureMax + "°C";
+          if (info.precipitationProbability != null)
+            desc += "   |   🌧 " + info.precipitationProbability + "% chance of rain";
+          $('#weatherTitle').text(title);
+          $('#weatherDesc').text(desc);
+          $('#weatherInfo').show();
+        },
+        error: function() {
+          $('#weatherTitle').text("Weather data unavailable for this location");
+          $('#weatherDesc').text("");
+          $('#weatherInfo').show();
         }
-      },
-      error: function(xhr, status, error) {
-        var errorMsg = "Error creating booking.";
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMsg = xhr.responseJSON.message;
-        }
-        alert(errorMsg);
-        console.error("Error creating booking:", error);
+      });
+    }
+
+    function AddRecord() {
+      var email = $('#inputBookingemailId').val();
+      var quantity = parseInt($('#quantity').val(), 10);
+      var eventId = getUrlParameter('id');
+      var bookingDate = new Date().toISOString();
+      var Title = $('#eventTitle').val();
+      var Type = $('#eventType').val();
+      var dateValue = $('#eventDate').val();
+      var date = dateValue;
+      if (dateValue) {
+        var parsedDate = new Date(dateValue);
+        if (!isNaN(parsedDate.getTime())) date = parsedDate.toISOString();
       }
-    });
+      var location = $('#eventLocation').val();
+      var cost = $('#eventCost').val();
+      var publisherId = $('#eventpublisherId').val();
 
-    
-  }
+      if (!email) { alert("Email is required."); return; }
+      if (!quantity || quantity < 1) { alert("Please select at least 1 ticket."); return; }
 
+      var requestData = {
+        eventId: eventId, emailId: email, publisherId: publisherId,
+        bookingDate: bookingDate, numberOfTickets: quantity, sequenceNo: 1,
+        title: Title, type: Type, date: date, location: location, cost: cost
+      };
 
+      $.ajax({
+        url: "http://localhost:8081/Booking/create", type: "POST",
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(requestData),
+        success: function(response) {
+          if (response.success) {
+            alert("Booking created successfully!");
+            window.location.href = 'MyBookings.html';
+          } else {
+            alert("Booking failed: " + response.message);
+          }
+        },
+        error: function(xhr) {
+          alert((xhr.responseJSON && xhr.responseJSON.message) || "Error creating booking.");
+        }
+      });
+    }
   </script>
-    
 </body>
-
 </html>

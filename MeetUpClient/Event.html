@@ -1,32 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Student meet Upe</title>
+  <!-- Fix 3: Proper app name -->
+  <title>Meet-Up | Events</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
+  <style>
+    /* Fix 1: Search bar spacing */
+    .search-row-fixed {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .search-row-fixed .search-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 180px;
+    }
+    .search-row-fixed .search-item label {
+      white-space: nowrap;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .search-row-fixed .search-item input {
+      flex: 1;
+      padding: 7px 12px;
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      font-size: 14px;
+      min-width: 80px;
+    }
+    .search-row-fixed .search-item button {
+      padding: 7px 14px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    /* Fix 2 & 4: Info badges on card */
+    .weather-info-badge {
+      display: inline-block;
+      background: #e8f4fd;
+      color: #1565a8;
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 13px;
+      margin: 4px 0 2px 0;
+    }
+    .message-info-badge {
+      display: inline-block;
+      background: #fff8e1;
+      color: #7c5c00;
+      border-radius: 5px;
+      padding: 3px 10px;
+      font-size: 13px;
+      margin: 2px 0 8px 0;
+    }
+  </style>
 </head>
 <body class="terms-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
           <li><a href="Event.html" class="active">Event</a></li>
-          <li><a href="SkiddleEvent.html" class="active">Skiddle Event</a></li>
-
+          <li><a href="SkiddleEvent.html">Skiddle Event</a></li>
         </ul>
       </nav>
-
       <div id="authButtons">
         <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
         <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
@@ -35,307 +89,207 @@
         <a class="btn-getstarted" href="#" id="subscribeBtn" style="display:none;">Subscribe</a>
         <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
       </div>
-
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
-        <div class="container">
-          <br>
-          <div class="form-group row">
-           <div class="col-md-2"> 
-          <div class="input-group "> 
-            <input type="input" id="Searchevent" class="form-control" placeholder="Search..." aria-label="Search"> 
-            <button onclick="SearchEvent()" class="btn btn-primary" type="button">Search</button> </div>
-          
+      <div class="container">
+        <br>
+        <!-- Fix 1: Properly spaced search bars -->
+        <div class="search-row-fixed">
+          <div class="search-item">
+            <input type="text" id="Searchevent" placeholder="Search...">
+            <button onclick="SearchEvent()" class="btn btn-primary">Search</button>
           </div>
-        <div class="col-md-3"> 
-          <div class="input-group "> 
-            <label class="input-group-text" for="inputGroupSelect01">Filter by Type</label>
-            <input type="input" id="SearchType" class="form-control" placeholder="Search..." aria-label="Search"> <button onclick="SearchType()" class="btn btn-primary"  type="button">Search</button> </div>
-           </div>
-
-             <div class="col-md-3"> 
-          <div class="input-group "> 
-            <label class="input-group-text" for="inputGroupSelect01">Filter by Date</label>
-            <input type="date" class="form-control" id="SearchDate" placeholder="Search..." aria-label="Search"> <button class="btn btn-primary" onclick="SearchDate()" type="button">Search</button> </div>
-           </div>
-
-           <div class="col-md-3"> 
-          <div class="input-group "> 
-            <label class="input-group-text" for="inputGroupSelect01">Filter by Location</label>
-            <input type="input" class="form-control" id="SearchLocation" placeholder="Search..." aria-label="Search"> <button class="btn btn-primary" onclick="SearchLocation()" type="button">Search</button> </div>
-           </div>
-
+          <div class="search-item">
+            <label>Filter by Type</label>
+            <input type="text" id="SearchType" placeholder="Search...">
+            <button onclick="SearchType()" class="btn btn-primary">Search</button>
+          </div>
+          <div class="search-item">
+            <label>Filter by Date</label>
+            <input type="date" id="SearchDate">
+            <button onclick="SearchDate()" class="btn btn-primary">Search</button>
+          </div>
+          <div class="search-item">
+            <label>Filter by Location</label>
+            <input type="text" id="SearchLocation" placeholder="Search...">
+            <button onclick="SearchLocation()" class="btn btn-primary">Search</button>
+          </div>
         </div>
 
-         <div id="myeventCard" class="row"> <!-- First chart --> 
-        
-      </div> 
-    </div>
-    
-        </div>
-  </main>  
-     <!-- End Page Title -->
-<footer>
-
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
+        <div id="myeventCard" class="row"></div>
       </div>
     </div>
+  </main>
 
+  <footer>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">Designed by Mrunali</div>
+    </div>
   </footer>
-  <!-- jQuery -->
-    <script>
-      function formatEventType(type) {
-        if (!type) {
-          return '';
-        }
-        return type.toLowerCase() === 'other' ? 'Social Event' : type;
-      }
 
-      function bindData(response){
-        var content='';
-
-          response.forEach(function(event) {
-
-
-        var eventCardb="";
-        var eventCardc=""
-        var ticketcont=event.maxNumberOfParticipants-event.bookingCount;
-        
-
-
-            var eventCard ='<div class="col-md-6">  <div class="card feature-card shadow-sm mb-3">' +
-             '<div class="card-body">' +
-             '<h5 class="card-title">' + event.title + '</h5>' +
-             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + formatEventType(event.type) + '</h6>' +
-             '<p class="card-text">' +  
-              '📍 Location: ' + event.location + '<br>' +
-              '📅 Date: ' + new Date(event.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
-              '💰 Cost: GBP ' + event.cost + '<br>' +
-              '👥 tickets Available: ' + ticketcont + '<br>' +
-              '✓ Rating: ' + event.ratingCount + '|  Message'  + '<br>' +
-              '</p>' ;
-           
-              if(event.bookingCount<event.maxNumberOfParticipants){
-                eventCardb= '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Registered</a>' ;
-              }
-              else{
-               eventCardb= '<a href="#" class="btn btn-warning">Event Full</a>' ;
-              }
-
-             eventCardc= ' <a href="Rating.html?id=' + event.id + '" class="btn btn-warning">Rating & Feedback</a>' +'</div>' +
-              '</div>' +
-              '</div>' ;
-
-              content += eventCard+ eventCardb + eventCardc;
-          });
-        
-        $('#myeventCard').html(content);
-      }
-
- function SearchEvent() {
-
-         var searchTerm = $('#Searchevent').val();
-
-          $.ajax({
-                url: "http://localhost:8081/events/SeachByText?text=" + searchTerm,
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
- function SearchDate() {
-
-         var searchData = $('#SearchDate').val();
-       // alert(searchData);
-          $.ajax({
-                url: "http://localhost:8081/events/getByDate?date=" + searchData,
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-       function SearchLocation() {
-
-         var searchData = $('#SearchLocation').val();
-      //  alert(searchData);
-          $.ajax({
-                url: "http://localhost:8081/events/getLocation?location=" + searchData,
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-
-       function SearchType() {
-
-         var searchData = $('#SearchType').val().trim();
-         if (searchData.toLowerCase() === 'social event') {
-           searchData = 'other';
-         }
-        // alert(searchData);
-
-          $.ajax({
-                url: "http://localhost:8081/events/getType?type=" + searchData,
-                type: "GET",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-
-$(document).ready(function () {
-  var user = localStorage.getItem('user');
-  var currentUser = null;
-  if (user) {
-    user = JSON.parse(user);
-    currentUser = user;
-    $('#loginBtn').hide();
-    $('#eventRegisterBtn').show();
-    $('#userWelcome').text('Welcome, ' + user.name).show();
-    $('#subscriptionStatus').show();
-    $('#logoutBtn').show();
-    loadSubscriptionStatus(user.email);
-  } else {
-    $('#loginBtn').show();
-    $('#eventRegisterBtn').hide();
-    $('#userWelcome').hide();
-    $('#subscriptionStatus').hide();
-    $('#subscribeBtn').hide();
-    $('#logoutBtn').hide();
-  }
-
-  $('#logoutBtn').on('click', function(e) {
-    e.preventDefault();
-    localStorage.removeItem('user');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userEmail');
-    alert('Logged out successfully!');
-    location.reload();
-  });
-
-  $('#subscribeBtn').on('click', function(e) {
-    e.preventDefault();
-    if (!currentUser || !currentUser.email) {
-      alert('Please login to subscribe.');
-      return;
+  <script>
+    function formatEventType(type) {
+      if (!type) return '';
+      return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
 
-    var payload = {
-      name: currentUser.name,
-      emailId: currentUser.email
-    };
+    // Fix 2: Weather fetch per card
+    function fetchWeatherForCard(location, date, badgeId) {
+      if (!location) { $('#' + badgeId).text('🌤 Location not set'); return; }
+      var dateStr = '';
+      if (date) { try { dateStr = new Date(date).toISOString().split('T')[0]; } catch(e){} }
+      var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+      if (dateStr) url += "&date=" + dateStr;
+      $.ajax({
+        url: url, type: "GET",
+        success: function(info) {
+          var msg = "🌤 " + info.location;
+          if (info.temperatureMin != null && info.temperatureMax != null)
+            msg += ": " + info.temperatureMin + "°C – " + info.temperatureMax + "°C";
+          if (info.precipitationProbability != null)
+            msg += " | 🌧 " + info.precipitationProbability + "% rain";
+          $('#' + badgeId).text(msg);
+        },
+        error: function() { $('#' + badgeId).text("🌤 Weather unavailable"); }
+      });
+    }
 
-    $.ajax({
-      url: "http://localhost:8081/students/subscribe",
-      type: "POST",
-      contentType: "application/json; charset=utf-8",
-      data: JSON.stringify(payload),
-      success: function(response) {
-        if (response.success) {
-          updateSubscriptionUI(true);
-        } else {
-          alert(response.message || 'Subscription failed.');
-        }
-      },
-      error: function(xhr) {
-        var errorMsg = 'Subscription failed.';
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMsg = xhr.responseJSON.message;
-        }
-        alert(errorMsg);
+    function bindData(response) {
+      var content = '';
+      response.forEach(function(event, index) {
+        var ticketcont = event.maxNumberOfParticipants - event.bookingCount;
+        var weatherBadgeId = 'weather_' + index;
+
+        // Fix 4: Review/message count
+        var messageCount = event.ratingCount || 0;
+        var messageBadge = messageCount > 0
+          ? '💬 ' + messageCount + ' review' + (messageCount !== 1 ? 's' : '')
+          : '💬 No reviews yet';
+
+        var registerBtn = event.bookingCount < event.maxNumberOfParticipants
+          ? '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Registered</a>'
+          : '<a href="#" class="btn btn-warning">Event Full</a>';
+
+        content += '<div class="col-md-6">' +
+          '<div class="card feature-card shadow-sm mb-3">' +
+          '<div class="card-body">' +
+          '<h5 class="card-title">' + event.title + '</h5>' +
+          '<h6 class="card-subtitle mb-2 text-muted">Type: ' + formatEventType(event.type) + '</h6>' +
+          '<p class="card-text">' +
+          '📍 Location: ' + event.location + '<br>' +
+          '📅 Date: ' + new Date(event.date).toLocaleDateString("nl", {day:"2-digit", month:"2-digit", year:"numeric"}) + '<br>' +
+          '💰 Cost: ' + (event.cost == 0 ? 'Free' : 'GBP ' + event.cost) + '<br>' +
+          '👥 Tickets Available: ' + ticketcont +
+          '</p>' +
+          '<div class="weather-info-badge" id="' + weatherBadgeId + '">🌤 Loading weather...</div><br>' +
+          '<div class="message-info-badge">' + messageBadge + '</div><br>' +
+          registerBtn + '&nbsp;' +
+          '<a href="Rating.html?id=' + event.id + '" class="btn btn-warning">Rating & Feedback</a>' +
+          '</div></div></div>';
+
+        (function(loc, dt, bid, i) {
+          setTimeout(function() { fetchWeatherForCard(loc, dt, bid); }, 150 * i);
+        })(event.location, event.date, weatherBadgeId, index);
+      });
+      $('#myeventCard').html(content);
+    }
+
+    function SearchEvent() {
+      $.ajax({ url: "http://localhost:8081/events/SeachByText?text=" + $('#Searchevent').val(),
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+    }
+    function SearchDate() {
+      $.ajax({ url: "http://localhost:8081/events/getByDate?date=" + $('#SearchDate').val(),
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+    }
+    function SearchLocation() {
+      $.ajax({ url: "http://localhost:8081/events/getLocation?location=" + $('#SearchLocation').val(),
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+    }
+    function SearchType() {
+      var val = $('#SearchType').val().trim();
+      if (val.toLowerCase() === 'social event') val = 'other';
+      $.ajax({ url: "http://localhost:8081/events/getType?type=" + val,
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+    }
+
+    $(document).ready(function () {
+      var user = localStorage.getItem('user');
+      var currentUser = null;
+      if (user) {
+        user = JSON.parse(user);
+        currentUser = user;
+        $('#loginBtn').hide();
+        $('#eventRegisterBtn').show();
+        $('#userWelcome').text('Welcome, ' + user.name).show();
+        $('#subscriptionStatus').show();
+        $('#logoutBtn').show();
+        loadSubscriptionStatus(user.email);
+      } else {
+        $('#loginBtn').show();
+        $('#eventRegisterBtn').hide();
+        $('#userWelcome').hide();
+        $('#subscriptionStatus').hide();
+        $('#subscribeBtn').hide();
+        $('#logoutBtn').hide();
       }
-    });
-  });
 
- $.ajax({
-      url: "http://localhost:8081/events/getAll",
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success: function(response) {
-        bindData(response);
-        console.log("Event Get data successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        console.error("Error getting data for events:", error);
-      }
-    });
+      $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        alert('Logged out successfully!');
+        location.reload();
+      });
 
+      $('#subscribeBtn').on('click', function(e) {
+        e.preventDefault();
+        if (!currentUser || !currentUser.email) { alert('Please login to subscribe.'); return; }
+        $.ajax({
+          url: "http://localhost:8081/students/subscribe", type: "POST",
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify({ name: currentUser.name, emailId: currentUser.email }),
+          success: function(r) { if (r.success) updateSubscriptionUI(true); else alert(r.message || 'Subscription failed.'); },
+          error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Subscription failed.'); }
         });
+      });
 
-function loadSubscriptionStatus(email) {
-  $.ajax({
-    url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
-    type: "GET",
-    contentType: "application/json; charset=utf-8",
-    success: function(response) {
-      var subscribed = response.data && response.data.subscribed === true;
-      updateSubscriptionUI(subscribed);
-    },
-    error: function() {
-      updateSubscriptionUI(false);
+      $.ajax({
+        url: "http://localhost:8081/events/getAll", type: "GET",
+        contentType: "application/json; charset=utf-8", dataType: "json",
+        success: bindData,
+        error: function(xhr, status, error) { console.error("Error getting data for events:", error); }
+      });
+    });
+
+    function loadSubscriptionStatus(email) {
+      $.ajax({
+        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
+        type: "GET", contentType: "application/json; charset=utf-8",
+        success: function(r) { updateSubscriptionUI(r.data && r.data.subscribed === true); },
+        error: function() { updateSubscriptionUI(false); }
+      });
     }
-  });
-}
 
-function updateSubscriptionUI(subscribed) {
-  if (subscribed) {
-    $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
-    $('#subscribeBtn').hide();
-  } else {
-    $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
-    $('#subscribeBtn').show();
-  }
-}
-
-
-    </script>
-    
+    function updateSubscriptionUI(subscribed) {
+      if (subscribed) {
+        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscribeBtn').hide();
+      } else {
+        $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
+        $('#subscribeBtn').show();
+      }
+    }
+  </script>
 </body>
-
 </html>
