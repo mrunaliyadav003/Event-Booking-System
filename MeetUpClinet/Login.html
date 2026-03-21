@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Login - Student Meet Up</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </nav>
+
+      <a class="btn-getstarted" href="UserRegister.html">Register</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="container">
+        <br><br><br>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card shadow">
+              <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Login</h2>
+                <form id="loginForm">
+                  <div class="form-group mb-3">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                  </div>
+                  <div class="alert alert-danger d-none" id="errorMessage" role="alert"></div>
+                  <button type="submit" class="btn btn-primary btn-block w-100">Login</button>
+                </form>
+                <div class="text-center mt-3">
+                  <p>Don't have an account? <a href="UserRegister.html">Register here</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    $(document).ready(function () {
+      // Check if user is already logged in
+      if (localStorage.getItem('user')) {
+        window.location.href = 'index.html';
+      }
+
+      $('#loginForm').on('submit', function (e) {
+        e.preventDefault();
+
+        var email = $('#email').val();
+        var password = $('#password').val();
+
+        var loginData = {
+          email: email,
+          password: password
+        };
+
+        $.ajax({
+          url: "http://localhost:8080/auth/login",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify(loginData),
+          success: function (response) {
+            if (response.success) {
+              // Store user data in localStorage
+              localStorage.setItem('user', JSON.stringify(response.data));
+              localStorage.setItem('userId', response.data.id);
+              localStorage.setItem('userName', response.data.name);
+              localStorage.setItem('userEmail', response.data.email);
+
+              // Redirect to home page
+              alert('Login successful!');
+              window.location.href = 'index.html';
+            } else {
+              $('#errorMessage').text(response.message).removeClass('d-none');
+            }
+          },
+          error: function (xhr, status, error) {
+            var errorMsg = "Login failed. Please try again.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMsg = xhr.responseJSON.message;
+            }
+            $('#errorMessage').text(errorMsg).removeClass('d-none');
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

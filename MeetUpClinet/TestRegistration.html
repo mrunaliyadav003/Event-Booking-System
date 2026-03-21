@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration</title>
+    <script src="js/jquery-4.0.0.min.js"></script>
+</head>
+<body>
+    <h2>Test Registration API</h2>
+    <button onclick="testRegister()">Test Register</button>
+    <div id="result"></div>
+
+    <script>
+        function testRegister() {
+            var testData = {
+                name: "Test User",
+                email: "test" + Date.now() + "@example.com",
+                phone: "1234567890",
+                password: "test123"
+            };
+
+            console.log("Sending:", testData);
+            $('#result').html('Sending request...');
+
+            $.ajax({
+                url: "http://localhost:8080/auth/register",
+                type: "POST",
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(testData),
+                success: function(response) {
+                    console.log("Success:", response);
+                    $('#result').html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", xhr.responseText);
+                    $('#result').html('<pre>Error: ' + xhr.status + '\n' + xhr.responseText + '</pre>');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

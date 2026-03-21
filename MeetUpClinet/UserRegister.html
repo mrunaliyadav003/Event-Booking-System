@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Register - Student Meet Up</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+        </ul>
+      </nav>
+
+      <a class="btn-getstarted" href="Login.html">Login</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Page Title -->
+    <div class="page-title">
+      <div class="container">
+        <br><br><br>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="card shadow">
+              <div class="card-body p-5">
+                <h2 class="card-title text-center mb-4">Create Account</h2>
+                <form id="registerForm">
+                  <div class="form-group mb-3">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter full name" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="phone" placeholder="Enter phone number" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                  </div>
+                  <div class="form-group mb-3">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" required>
+                  </div>
+                  <div class="alert alert-danger d-none" id="errorMessage" role="alert"></div>
+                  <div class="alert alert-success d-none" id="successMessage" role="alert"></div>
+                  <button type="submit" class="btn btn-primary btn-block w-100">Register</button>
+                </form>
+                <div class="text-center mt-3">
+                  <p>Already have an account? <a href="Login.html">Login here</a></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        Designed by Mrunali
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    $(document).ready(function () {
+      $('#registerForm').on('submit', function (e) {
+        e.preventDefault();
+
+        // Hide previous messages
+        $('#errorMessage').addClass('d-none');
+        $('#successMessage').addClass('d-none');
+
+        var name = $('#name').val();
+        var email = $('#email').val();
+        var phone = $('#phone').val();
+        var password = $('#password').val();
+        var confirmPassword = $('#confirmPassword').val();
+
+        // Validate passwords match
+        if (password !== confirmPassword) {
+          $('#errorMessage').text('Passwords do not match').removeClass('d-none');
+          return;
+        }
+
+        // Validate password length
+        if (password.length < 6) {
+          $('#errorMessage').text('Password must be at least 6 characters long').removeClass('d-none');
+          return;
+        }
+
+        var userData = {
+          name: name,
+          email: email,
+          phone: phone,
+          password: password
+        };
+
+        console.log("Sending registration data:", JSON.stringify(userData));
+
+        $.ajax({
+          url: "http://localhost:8080/auth/register",
+          type: "POST",
+          contentType: "application/json; charset=utf-8",
+          data: JSON.stringify(userData),
+          success: function (response) {
+            console.log("Registration response:", response);
+            if (response.success) {
+              $('#successMessage').text('Registration successful! Logging you in...').removeClass('d-none');
+
+              // Auto-login after successful registration
+              $.ajax({
+                url: "http://localhost:8080/auth/login",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json",
+                data: JSON.stringify({
+                  email: email,
+                  password: password
+                }),
+                success: function (loginResponse) {
+                  if (loginResponse.success) {
+                    // Store user data in localStorage
+                    localStorage.setItem('user', JSON.stringify(loginResponse.data));
+                    localStorage.setItem('userId', loginResponse.data.id);
+                    localStorage.setItem('userName', loginResponse.data.name);
+                    localStorage.setItem('userEmail', loginResponse.data.email);
+
+                    // Redirect to home page
+                    setTimeout(function() {
+                      window.location.href = 'index.html';
+                    }, 1000);
+                  } else {
+                    // Registration successful but login failed, redirect to login page
+                    setTimeout(function() {
+                      window.location.href = 'Login.html';
+                    }, 2000);
+                  }
+                },
+                error: function() {
+                  // Registration successful but login failed, redirect to login page
+                  setTimeout(function() {
+                    window.location.href = 'Login.html';
+                  }, 2000);
+                }
+              });
+            } else {
+              $('#errorMessage').text(response.message || 'Registration failed').removeClass('d-none');
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Registration error:", xhr.responseText);
+            var errorMsg = "Registration failed. Please try again.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMsg = xhr.responseJSON.message;
+            } else if (xhr.responseText) {
+              errorMsg = xhr.responseText;
+            }
+            $('#errorMessage').text(errorMsg).removeClass('d-none');
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
