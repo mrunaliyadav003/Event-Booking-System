@@ -9,7 +9,8 @@
 | Service | URL |
 |---|---|
 | Frontend | `http://studentmeetup.local` |
-| Swagger API Docs | `http://localhost:8081/swagger-ui/index.html` |
+| Swagger API Docs | `http://localhost:8080/swagger-ui/index.html` |
+| Load Balancer Test | 'http://localhost:8080/events/getAll' |
 | MongoDB | `localhost:28017` |
 
 ---
