@@ -1,0 +1,3 @@
+Label,# Samples,Average,Median,90% Line,95% Line,99% Line,Min,Max,Error %,Throughput,Received KB/sec,Sent KB/sec
+Get All Events,250,20,17,33,39,68,10,127,0.000%,25.67790,75.45,3.26
+TOTAL,250,20,17,33,39,68,10,127,0.000%,25.67790,75.45,3.26
