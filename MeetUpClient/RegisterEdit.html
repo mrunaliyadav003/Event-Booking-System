@@ -1,266 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Student meet Upe</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-<link href="css/bootstrap.min.css" rel="stylesheet">
+  <title>Meet-Up | Edit Event</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  
-
-  
 </head>
 <body class="terms-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
         </ul>
       </nav>
-
-      <a class="btn-getstarted" href="EventRegisterList.html">Event Register </a>
-
+      <a class="btn-getstarted" href="EventRegisterList.html">Event Register</a>
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
       <div class="heading">
         <div class="container">
-        <form>
+          <form>
             <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-10">
-             <h1 class=" heading-title ">Edit Event Register</h1>
-    </div>
-  </div>
-  <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Publisher Email</label>
-    <div class="col-sm-3">
-      <input type="input" class="form-control" id="inputpublisherId" placeholder="">
-    </div>
-  </div>
-  <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Title</label>
-    <div class="col-sm-6">
-      <input type="input" class="form-control" id="inputTitle" placeholder=" ">
-    </div>
-  </div>
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Event Date</label>
-    <div class="col-sm-2">
-      <input type="date" class="form-control datepicker" id="inputDate" placeholder="Event Date">
-    </div>
-  </div>
-  <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Location</label>
-    <div class="col-sm-6">
-      <input type="input" class="form-control" id="inputlocation" placeholder=" ">
-    </div>
-  </div>
-
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">cost</label>
-    <div class="col-sm-2">
-      <input type="input" class="form-control" id="inputcost" placeholder="">
-    </div>
-  </div>
-
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">max Number Of Participants</label>
-</label>
-    <div class="col-sm-2">
-      <input type="input" class="form-control" id="inputmaxNumberOfParticipants" placeholder=" ">
-    </div>
-  </div>
-
-  <fieldset class="form-group">
-    <div class="row">
-      <legend class="col-form-label col-sm-2 pt-0">type</legend>
-      <div class="col-sm-2">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="sport" checked>
-          <label class="form-check-label" for="gridRadios1">
-           sport
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="concert">
-          <label class="form-check-label" for="gridRadios2">
-            concert
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios4" value="other">
-          <label class="form-check-label" for="gridRadios4">
-            Social Event
-          </label>
-        </div>
-        <div class="form-check disabled">
-          <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="etc" disabled>
-          <label class="form-check-label" for="gridRadios3">
-            etc
-          </label>
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-10">
+                <h1 class="heading-title">Edit Event</h1>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Publisher Email</label>
+              <div class="col-sm-3">
+                <input type="email" class="form-control" id="inputpublisherId">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Title</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="inputTitle">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Event Date</label>
+              <div class="col-sm-2">
+                <input type="date" class="form-control" id="inputDate">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Location</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="inputlocation">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Cost (£)</label>
+              <div class="col-sm-2">
+                <input type="number" class="form-control" id="inputcost" min="0">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Max Participants</label>
+              <div class="col-sm-2">
+                <input type="number" class="form-control" id="inputmaxNumberOfParticipants" min="1">
+              </div>
+            </div>
+            <fieldset class="form-group">
+              <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0">Type</legend>
+                <div class="col-sm-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="sport" checked>
+                    <label class="form-check-label" for="gridRadios1">Sport</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="concert">
+                    <label class="form-check-label" for="gridRadios2">Concert</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios4" value="other">
+                    <label class="form-check-label" for="gridRadios4">Social Event</label>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-3">
+                <input type="button" onclick="EditRecord()" class="btn btn-primary" value="Update">
+                <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='EventRegisterList.html'">
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </fieldset>
-          <br>
+  </main>
 
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-2">
-      <input type="button" onclick="EditRecord()" class="btn btn-primary" value="Submit">
-       <input type="button"  class="btn btn-success" value="Cancel" onclick="window.location.href='EventRegisterList.html'">
-    </div>
-  </div>
-
-</form>
-
-  
-          </div>
-        </div>
-      </div>
-     </div><!-- End Page Title -->
-
+  <footer>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
-      </div>
+      <div class="credits">Designed by Mrunali</div>
     </div>
-
   </footer>
-  
+
   <script>
+    const API = 'http://localhost:8080';
 
-  function EditRecord()
-  
-  {
-  
-    var publisherId = $('#inputpublisherId').val();
-    var title = $('#inputTitle').val();
-    var eventDateValue = $('#inputDate').val();
-    if (!eventDateValue) {
-      alert("Please select an event date.");
-      return;
-    }
-    var eventDateObj = new Date(eventDateValue);
-    if (Number.isNaN(eventDateObj.getTime())) {
-      alert("Please enter a valid event date.");
-      return;
-    }
-    var eventDate = eventDateObj.toISOString();
-    var location = $('#inputlocation').val();
-    var cost = parseFloat($('#inputcost').val());
-    if (Number.isNaN(cost)) {
-      cost = 0;
-    }
-    var maxNumberOfParticipants = parseInt($('#inputmaxNumberOfParticipants').val(), 10);
-    var type = $("input[name='gridRadios']:checked").val();
-    
-    if (!maxNumberOfParticipants || maxNumberOfParticipants < 1) {
-      alert("Please enter a valid maximum number of participants.");
-      return;
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
 
+    var id = getUrlParameter('id');
+    LoadData(id);
 
-    var record = {
-      publisherId: publisherId,
-      title: title,
-      date: eventDate,
-      location: location,
-      cost: cost,
-      maxNumberOfParticipants: maxNumberOfParticipants,
-      type: type
-    };
+    function LoadData(id) {
+      $.ajax({
+        url: API + "/events/getById?id=" + id,
+        type: "GET", dataType: "json",
+        success: function(r) { bindData(r); },
+        error: function(xhr, s, e) { alert(e); }
+      });
+    }
 
+    function bindData(r) {
+      var apiDate = new Date(r.date);
+      $('#inputpublisherId').val(r.publisherId);
+      $('#inputTitle').val(r.title);
+      $('#inputDate').val(apiDate.toISOString().split('T')[0]);
+      $('#inputlocation').val(r.location);
+      $('#inputcost').val(r.cost);
+      $('#inputmaxNumberOfParticipants').val(r.maxNumberOfParticipants);
+      $("input[name='gridRadios'][value='" + r.type + "']").prop('checked', true);
+    }
 
-    $.ajax({
-      url: "http://localhost:8081/events/update?id=" + id,
-      type: "PUT",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      data: JSON.stringify(record),
-      success: function(response) {
-        alert("Event updated successfully!");
-        console.log("Event updated successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        var errorMsg = "Error updating event.";
-        if (xhr.responseJSON && xhr.responseJSON.message) {
-          errorMsg = xhr.responseJSON.message;
+    function EditRecord() {
+      var publisherId = $('#inputpublisherId').val();
+      var title = $('#inputTitle').val();
+      var eventDateValue = $('#inputDate').val();
+      if (!eventDateValue) { alert("Please select an event date."); return; }
+      var eventDateObj = new Date(eventDateValue);
+      if (isNaN(eventDateObj.getTime())) { alert("Please enter a valid event date."); return; }
+      var eventDate = eventDateObj.toISOString();
+      var location = $('#inputlocation').val();
+      var cost = parseFloat($('#inputcost').val());
+      if (isNaN(cost)) cost = 0;
+      var maxNumberOfParticipants = parseInt($('#inputmaxNumberOfParticipants').val(), 10);
+      var type = $("input[name='gridRadios']:checked").val();
+      if (!maxNumberOfParticipants || maxNumberOfParticipants < 1) { alert("Please enter valid max participants."); return; }
+
+      $.ajax({
+        url: API + "/events/update?id=" + id,
+        type: "PUT",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({ publisherId, title, date: eventDate, location, cost, maxNumberOfParticipants, type }),
+        success: function() {
+          alert("Event updated successfully!");
+          window.location.href = 'EventRegisterList.html';
+        },
+        error: function(xhr) {
+          alert((xhr.responseJSON && xhr.responseJSON.message) || "Error updating event.");
         }
-        alert(errorMsg);
-        console.error("Error updating event:", xhr.responseText || error);
-      }
-    });
-  }
-  
-  function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }
-var id = getUrlParameter('id');
-LoadData(id);
-
-function LoadData(id) {
-
-      var requestUrl="http://localhost:8081/events/getById?id=" + id;
-      
-          $.ajax({
-                url: requestUrl,
-                type: "Get",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                 // alert(JSON.stringify(response));
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  alert(error);
-                  console.error("Error getting data for events:", error);
-                }
-              });
-
-      }
-
-function bindData(response){
-    let apiDate = new Date(response.date);
-          $('#inputpublisherId').val(response.publisherId);
-          $('#inputTitle').val(response.title);
-          $('#inputDate').val(apiDate.toISOString().split('T')[0]);
-          $('#inputlocation').val(response.location);
-          $('#inputcost').val(response.cost);
-          $('#inputmaxNumberOfParticipants').val(response.maxNumberOfParticipants);
-          $("input[name='gridRadios'][value='" + response.type + "']").prop('checked', true);
-//           $('#datepicker').datepicker('setDate', apiDate);
-
-          
-      }
-
-
-
- 
-
-    </script>
-
-    
+      });
+    }
+  </script>
 </body>
-
 </html>

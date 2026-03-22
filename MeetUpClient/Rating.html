@@ -1,116 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Rating & Feedback - Student meet Up</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-<link href="css/bootstrap.min.css" rel="stylesheet">
+  <title>Meet-Up | Rating & Feedback</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
-  
-  
-  
 </head>
 <body class="terms-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-          
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
       <div class="heading">
         <div class="container">
-        <form>
+          <form>
+            <div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
+              <div id="myeventCard" class="event-info mb-5"></div>
+            </div>
 
-<!-- Booking Star-->
-<div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
-              <div id="myeventCard" class="event-info mb-5">
-                
-                </div>
- </div>
-
-<!-- Booking End -->
             <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-3">
-             <h1 class=" heading-title ">Rating & Feedback</h1>
-    </div>
-  </div>
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-3">
+                <h1 class="heading-title">Rating & Feedback</h1>
+              </div>
+            </div>
 
-  <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Your EmailId</label>
-    <div class="col-sm-3">
-      <input type="input" class="form-control" id="inputstudentId">
-    </div>
-  </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Your Email</label>
+              <div class="col-sm-3">
+                <input type="email" class="form-control" id="inputstudentId">
+              </div>
+            </div>
 
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Your Feedback</label>
-    <div class="col-sm-3">
-      <input type="input" class="form-control" id="inputcomment">
-    </div>
-  </div>
-<br>
-    <div class="form-group row">
-    <label  class="col-sm-2 col-form-label">Rating</label>
-    <div class="col-sm-3">
-       <select name="Rating" id="Rating" class="form-control" required="">
-                    <option value="1">1 </option>
-                    <option value="2">2 </option>
-                    <option value="3">3 </option>
-                    <option value="4">4 </option>
-                    <option value="5">5 </option>
-                  </select>
-    </div>
-  </div>
-<br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Your Feedback</label>
+              <div class="col-sm-3">
+                <input type="text" class="form-control" id="inputcomment" placeholder="Share your experience...">
+              </div>
+            </div>
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Rating</label>
+              <div class="col-sm-3">
+                <select name="Rating" id="Rating" class="form-control" required="">
+                  <option value="1">⭐ 1 - Poor</option>
+                  <option value="2">⭐⭐ 2 - Fair</option>
+                  <option value="3">⭐⭐⭐ 3 - Good</option>
+                  <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                  <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                </select>
+              </div>
+            </div>
+            <br>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label"></label>
+              <div class="col-sm-3">
+                <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+                <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+              </div>
+            </div>
 
-  
-  
-                <div class="form-group row">
-    <label  class="col-sm-2 col-form-label"></label>
-    <div class="col-sm-3">
-      <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
-      <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
-    </div>
-  </div>
-<div style="display:none;"  >  
-  <input type="hidden" id="eventId" value="">
-  <input  id="studentId" value="">
-  <input type="hidden" id="eventpublisherId" value="">
-</div>
-</div>
-</form>
-
-  
-          </div>
+            <div style="display:none;">
+              <input type="hidden" id="eventId" value="">
+              <input id="studentId" value="">
+              <input type="hidden" id="eventpublisherId" value="">
+            </div>
+          </form>
         </div>
       </div>
-     </div><!-- End Page Title -->
-  </main>
-    <div class="container copyright text-center mt-4">
-      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
-      </div>
     </div>
+  </main>
 
-  </footer>
-  
+  <div class="container copyright text-center mt-4">
+    <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+    <div class="credits">Designed by Mrunali</div>
+  </div>
+
   <script>
+    const API = 'http://localhost:8080';
 
-    // Check if user is logged in and pre-fill email
     $(document).ready(function () {
       var user = localStorage.getItem('user');
       if (user) {
@@ -120,123 +98,67 @@
       }
     });
 
-     function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }
-var id = getUrlParameter('id');
-LoadData(id);
+    function getUrlParameter(name) {
+      name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+      var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+      var results = regex.exec(location.search);
+      return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+
+    var id = getUrlParameter('id');
+    LoadData(id);
 
     function LoadData(id) {
+      $.ajax({
+        url: API + "/events/getById?id=" + id,
+        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
+        success: function(response) { bindData(response); },
+        error: function(xhr, status, error) { alert(error); }
+      });
+    }
 
-      var requestUrl="http://localhost:8081/events/getById?id=" + id;
-      
-          $.ajax({
-                url: requestUrl,
-                type: "Get",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(response) {
-                 // alert(JSON.stringify(response));
-                  bindData(response);
-                  console.log("Event Get data successfully:", response);
-                },
-                error: function(xhr, status, error) {
-                  alert(error);
-                  console.error("Error getting data for events:", error);
-                }
-              });
+    function formatEventType(type) {
+      if (!type) return '';
+      return type.toLowerCase() === 'other' ? 'Social Event' : type;
+    }
 
-      }
+    function bindData(response) {
+      var eventCard =
+        '<div class="col-md-8"><div class="card feature-card shadow-sm mb-3"><div class="card-body">' +
+        '<h2 class="card-title">' + response.title + '</h2>' +
+        '<p class="card-text">' +
+        '👥 Type: ' + formatEventType(response.type) + '<br>' +
+        '📍 Location: ' + response.location + '<br>' +
+        '📅 Date: ' + new Date(response.date).toLocaleDateString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric"}) + '<br>' +
+        '💰 Cost: ' + (response.cost == 0 ? 'Free' : response.cost) +
+        '</p></div></div></div>';
+      $('#myeventCard').html(eventCard);
+      $('#eventId').val(response.id);
+    }
 
+    function AddRecord() {
+      var StudentId = $('#inputstudentId').val();
+      var Comment = $('#inputcomment').val();
+      var EventId = getUrlParameter('id');
+      var RatingScore = parseInt($('#Rating').val(), 10);
+      var RatingDate = new Date().toISOString();
 
-   function formatEventType(type) {
-        if (!type) {
-          return '';
-        }
-        return type.toLowerCase() === 'other' ? 'Social Event' : type;
-      }
+      if (!StudentId || !Comment || !EventId) { alert("Please fill in all fields"); return; }
+      if (!RatingScore || RatingScore < 1 || RatingScore > 5) { alert("Please select a rating between 1 and 5"); return; }
 
-   function bindData(response){
-        var content='';
-          var eventCard ='<div class="col-md-8">  <div class="card feature-card shadow-sm mb-3">' +
-             '<div class="card-body">' +
-             '<h2 class="card-title">' + response.title + '</h2>' +
-           //  '<h6 class="card-subtitle mb-2 text-muted">Type: ' + response.type + '</h6>' +   
-              '<p class="card-text">' + 
-                '👥 Type: ' + formatEventType(response.type) +  '<br>' +
-                '📍 Location: ' + response.location + '<br>' 
-                + '📅 Date: ' + new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"}) + '<br>' +
-                '💰 Cost: ' + response.cost + '<br>' +
-              //  '👥 Max Participants: ' + response.maxNumberOfParticipants +
-                '</p>' +
-                '</div>' +
-                '</div>' +
-                '</div>' ;
-  
-                content += eventCard;
-                $('#eventId').val(response.id);
-              //  $('#eventDate').val(new Date(response.date).toLocaleDateString("nl",{day:"2-digit",month:"2-digit", year:"numeric"} ));
-
-
-                
-              
-        $('#myeventCard').html(content);
-
-      }
-
-
-function AddRecord()
-  {
-            var StudentId = $('#inputstudentId').val();
-            var Comment = $('#inputcomment').val();
-            var EventId = getUrlParameter('id');
-            var RatingScore = parseInt($('#Rating').val(), 10);
-            var RatingDate = new Date().toISOString();
-
-            // Validate inputs
-            if (!StudentId || !Comment || !EventId) {
-              alert("Please fill in all fields");
-              return;
-            }
-            if (!RatingScore || RatingScore < 1 || RatingScore > 5) {
-              alert("Please select a rating between 1 and 5");
-              return;
-            }
-
-            var requestData = {
-              eventId: EventId,
-              studentId: StudentId,
-              score: RatingScore,
-              comment: Comment,
-              ratingDate: RatingDate
-            };
-
-            console.log("Submitting rating:", JSON.stringify(requestData));
-
-            $.ajax({
-              url: "http://localhost:8081/Rating/create",
-              type: "POST",
-              contentType: "application/json; charset=utf-8",
-              dataType: "json",
-              data: JSON.stringify(requestData),
-              success: function(response) {
-                alert("Feedback submitted successfully!");
-                console.log("Feedback submitted successfully:", response);
-                window.location.href = 'Event.html';
-              },
-              error: function(xhr, status, error) {
-                alert("Error submitting Feedback: " + error);
-                console.error("Error submitting Feedback:", xhr.responseText);
-              }
-            });
-  }
-
-
+      $.ajax({
+        url: API + "/Rating/create",
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        data: JSON.stringify({ eventId: EventId, studentId: StudentId, score: RatingScore, comment: Comment, ratingDate: RatingDate }),
+        success: function() {
+          alert("Feedback submitted successfully!");
+          window.location.href = 'Event.html';
+        },
+        error: function(xhr) { alert("Error submitting feedback: " + (xhr.responseJSON && xhr.responseJSON.message || 'Unknown error')); }
+      });
+    }
   </script>
-    
 </body>
-
 </html>

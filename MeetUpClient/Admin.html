@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Meet-Up | Admin Dashboard</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/main.css" rel="stylesheet">
+  <script src="js/jquery-4.0.0.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <style>
+    .admin-stat-card {
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      color: white;
+      font-weight: bold;
+    }
+    .stat-blue { background: #1E3A8A; }
+    .stat-green { background: #166534; }
+    .stat-amber { background: #92400E; }
+    .stat-red { background: #7F1D1D; }
+    .admin-stat-card h2 { font-size: 36px; margin: 0; }
+    .admin-stat-card p { margin: 0; font-size: 14px; opacity: 0.85; }
+    .section-card {
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .section-card h4 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .tab-btn {
+      border: none;
+      background: #f1f5f9;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #1E3A8A;
+      color: white;
+    }
+    .tab-content-panel { display: none; }
+    .tab-content-panel.active { display: block; }
+  </style>
+</head>
+<body class="terms-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <h1 class="sitename">Meet-Up</h1>
+      </a>
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="Event.html">Events</a></li>
+          <li><a href="Admin.html" class="active">Admin</a></li>
+        </ul>
+      </nav>
+      <div id="authButtons">
+        <span id="userWelcome" style="margin-right: 10px; font-weight: bold; color: #1E3A8A;"></span>
+        <span class="badge" style="background:#1E3A8A; color:white; padding:4px 10px; border-radius:6px; margin-right:10px;">ADMIN</span>
+        <a class="btn-getstarted" href="#" id="logoutBtn">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="page-title">
+      <div class="container" style="padding-top: 20px;">
+
+        <h1 style="font-size:26px; font-weight:700; margin-bottom:4px;">Admin Dashboard</h1>
+        <p style="color:#666; margin-bottom:24px;">StudentMeetUp — System Management</p>
+
+        <!-- Stats Row -->
+        <div class="row" id="statsRow">
+          <div class="col-md-3">
+            <div class="admin-stat-card stat-blue">
+              <h2 id="statEvents">—</h2>
+              <p>Total Events</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-stat-card stat-green">
+              <h2 id="statBookings">—</h2>
+              <p>Total Bookings</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-stat-card stat-amber">
+              <h2 id="statStudents">—</h2>
+              <p>Registered Students</p>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="admin-stat-card stat-red">
+              <h2 id="statRatings">—</h2>
+              <p>Total Ratings</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Buttons -->
+        <div style="margin-bottom: 16px;">
+          <button class="tab-btn active" onclick="showTab('events')">📅 All Events</button>
+          <button class="tab-btn" onclick="showTab('bookings')">🎟️ All Bookings</button>
+          <button class="tab-btn" onclick="showTab('students')">👥 All Students</button>
+        </div>
+
+        <!-- Events Tab -->
+        <div id="tab-events" class="tab-content-panel active">
+          <div class="section-card">
+            <h4>📅 All Events</h4>
+            <div class="table-responsive">
+              <table id="eventsTable" class="table table-striped" style="width:100%">
+                <thead>
+                  <tr class="table bg-warning">
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Publisher</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Cost</th>
+                    <th>Booked</th>
+                    <th>Max</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="eventsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bookings Tab -->
+        <div id="tab-bookings" class="tab-content-panel">
+          <div class="section-card">
+            <h4>🎟️ All Bookings</h4>
+            <div class="table-responsive">
+              <table id="bookingsTable" class="table table-striped" style="width:100%">
+                <thead>
+                  <tr class="table bg-warning">
+                    <th>Student Email</th>
+                    <th>Event Title</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th>Tickets</th>
+                    <th>Booking Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="bookingsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="tab-students" class="tab-content-panel">
+          <div class="section-card">
+            <h4>👥 All Students</h4>
+            <div class="table-responsive">
+              <table id="studentsTable" class="table table-striped" style="width:100%">
+                <thead>
+                  <tr class="table bg-warning">
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Subscribed</th>
+                  </tr>
+                </thead>
+                <tbody id="studentsBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">Designed by Mrunali</div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    const ADMIN_EMAIL = 'admin@localhost.com';
+    const API = 'http://localhost:8080';
+
+    // Auth check
+    $(document).ready(function () {
+      var user = localStorage.getItem('user');
+      if (!user) { alert('Please login'); window.location.href = 'Login.html'; return; }
+      user = JSON.parse(user);
+      if (user.email !== ADMIN_EMAIL) {
+        alert('Access denied. Admin only.');
+        window.location.href = 'index.html';
+        return;
+      }
+      $('#userWelcome').text('Welcome, ' + user.name);
+
+      $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        localStorage.clear();
+        window.location.href = 'Login.html';
+      });
+
+      loadAllData();
+    });
+
+    function showTab(tab) {
+      $('.tab-content-panel').removeClass('active');
+      $('.tab-btn').removeClass('active');
+      $('#tab-' + tab).addClass('active');
+      $('[onclick="showTab(\'' + tab + '\')"]').addClass('active');
+    }
+
+    function formatDate(val) {
+      if (!val) return '-';
+      var d = new Date(val);
+      return isNaN(d.getTime()) ? '-' : d.toLocaleDateString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric"});
+    }
+
+    function formatType(type) {
+      if (!type) return '';
+      return type.toLowerCase() === 'other' ? 'Social Event' : type;
+    }
+
+    function loadAllData() {
+      // Load Events
+      $.ajax({
+        url: API + '/events/getAll', type: 'GET', dataType: 'json',
+        success: function(events) {
+          $('#statEvents').text(events.length);
+          var content = '';
+          events.forEach(function(e) {
+            var isFull = e.bookingCount >= e.maxNumberOfParticipants;
+            var statusBadge = isFull
+              ? '<span class="badge bg-danger">Full</span>'
+              : '<span class="badge bg-success">Open</span>';
+            content += '<tr>';
+            content += '<td><strong>' + e.title + '</strong></td>';
+            content += '<td>' + formatType(e.type) + '</td>';
+            content += '<td>' + e.publisherId + '</td>';
+            content += '<td>' + formatDate(e.date) + '</td>';
+            content += '<td>' + e.location + '</td>';
+            content += '<td>' + (e.cost == 0 ? 'Free' : 'GBP ' + e.cost) + '</td>';
+            content += '<td>' + e.bookingCount + ' ' + statusBadge + '</td>';
+            content += '<td>' + e.maxNumberOfParticipants + '</td>';
+            content += '<td><button class="btn btn-danger btn-sm" onclick="deleteEvent(\'' + e.id + '\')">Delete</button></td>';
+            content += '</tr>';
+          });
+          $('#eventsBody').html(content);
+          if (!$.fn.DataTable.isDataTable('#eventsTable')) {
+            $('#eventsTable').DataTable({ pageLength: 10 });
+          }
+        }
+      });
+
+      // Load Bookings
+      $.ajax({
+        url: API + '/Booking/getAll', type: 'GET', dataType: 'json',
+        success: function(response) {
+          var bookings = response.data || response || [];
+          $('#statBookings').text(bookings.length);
+          var content = '';
+          bookings.forEach(function(b) {
+            content += '<tr>';
+            content += '<td>' + (b.emailId || b.email || '-') + '</td>';
+            content += '<td>' + (b.title || '-') + '</td>';
+            content += '<td>' + formatType(b.type) + '</td>';
+            content += '<td>' + formatDate(b.date) + '</td>';
+            content += '<td>' + (b.location || '-') + '</td>';
+            content += '<td>' + (b.numberOfTickets || 1) + '</td>';
+            content += '<td>' + formatDate(b.bookingDate) + '</td>';
+            content += '<td><button class="btn btn-warning btn-sm" onclick="cancelBooking(\'' + b.id + '\')">Cancel</button></td>';
+            content += '</tr>';
+          });
+          $('#bookingsBody').html(content);
+          if (!$.fn.DataTable.isDataTable('#bookingsTable')) {
+            $('#bookingsTable').DataTable({ pageLength: 10 });
+          }
+        }
+      });
+
+      // Load Students
+      $.ajax({
+        url: API + '/students/getAll', type: 'GET', dataType: 'json',
+        success: function(response) {
+          var students = response.data || response || [];
+          $('#statStudents').text(students.length);
+          var content = '';
+          students.forEach(function(s) {
+            var subBadge = s.subscribed
+              ? '<span class="badge bg-success">Subscribed</span>'
+              : '<span class="badge bg-secondary">Not Subscribed</span>';
+            content += '<tr>';
+            content += '<td>' + (s.name || '-') + '</td>';
+            content += '<td>' + (s.emailId || s.email || '-') + '</td>';
+            content += '<td>' + subBadge + '</td>';
+            content += '</tr>';
+          });
+          $('#studentsBody').html(content);
+          if (!$.fn.DataTable.isDataTable('#studentsTable')) {
+            $('#studentsTable').DataTable({ pageLength: 10 });
+          }
+        },
+        error: function() {
+          $('#statStudents').text('N/A');
+          $('#studentsBody').html('<tr><td colspan="3" class="text-center text-muted">Student list endpoint not available</td></tr>');
+        }
+      });
+
+      // Load Ratings count
+      $.ajax({
+        url: API + '/Rating/getAll', type: 'GET', dataType: 'json',
+        success: function(r) {
+          var ratings = r.data || r || [];
+          $('#statRatings').text(ratings.length);
+        },
+        error: function() { $('#statRatings').text('N/A'); }
+      });
+    }
+
+    function deleteEvent(id) {
+      if (!confirm('Are you sure you want to delete this event? All bookings will be affected.')) return;
+      $.ajax({
+        url: API + '/events/delete?id=' + id, type: 'DELETE',
+        success: function() {
+          alert('Event deleted successfully!');
+          location.reload();
+        },
+        error: function() { alert('Error deleting event.'); }
+      });
+    }
+
+    function cancelBooking(id) {
+      if (!confirm('Cancel this booking?')) return;
+      $.ajax({
+        url: API + '/Booking/cancel/' + id + '?email=' + ADMIN_EMAIL, type: 'DELETE',
+        success: function(r) {
+          if (r.success) { alert('Booking cancelled!'); location.reload(); }
+          else { alert('Failed: ' + r.message); }
+        },
+        error: function() { alert('Error cancelling booking.'); }
+      });
+    }
+  </script>
+</body>
+</html>

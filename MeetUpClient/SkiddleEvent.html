@@ -1,9 +1,9 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Skiddle Event - Student meet Up</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>Meet-Up | Skiddle Events</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
@@ -13,17 +13,15 @@
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
+          <li><a href="Event.html">Events</a></li>
         </ul>
       </nav>
-
       <div id="authButtons">
         <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
         <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
@@ -32,177 +30,114 @@
         <a class="btn-getstarted" href="#" id="subscribeBtn" style="display:none;">Subscribe</a>
         <a class="btn-getstarted" href="#" id="logoutBtn" style="display:none;">Logout</a>
       </div>
-
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
-        <div class="container">
-          <br>
-
-          <!-- Search Form -->
-          <div class="row mb-4">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">Search Events</h5>
-                  <form id="searchForm">
-                    <div class="row">
-                      <div class="col-md-4">
-                        <div class="form-group">
-                          <label for="citySelect">Select City</label>
-                          <select class="form-control" id="citySelect">
-                            <option value="52.950001,-1.150000">Nottingham</option>
-                            <option value="51.507351,-0.127758">London</option>
-                            <option value="53.483959,-2.244644">Manchester</option>
-                            <option value="52.486243,-1.890401">Birmingham</option>
-                            <option value="53.800755,-1.549077">Leeds</option>
-                            <option value="53.408371,-2.991573">Liverpool</option>
-                          </select>
-                        </div>
+      <div class="container">
+        <br>
+        <div class="row mb-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Search Public Events (Skiddle)</h5>
+                <form id="searchForm">
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-group">
+                        <label for="citySelect">Select City</label>
+                        <select class="form-control" id="citySelect">
+                          <option value="52.950001,-1.150000">Nottingham</option>
+                          <option value="51.507351,-0.127758">London</option>
+                          <option value="53.483959,-2.244644">Manchester</option>
+                          <option value="52.486243,-1.890401">Birmingham</option>
+                          <option value="53.800755,-1.549077">Leeds</option>
+                          <option value="53.408371,-2.991573">Liverpool</option>
+                        </select>
                       </div>
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label for="radius">Radius (miles)</label>
-                          <input type="number" class="form-control" id="radius" value="10" min="1" max="50">
-                        </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label for="radius">Radius (miles)</label>
+                        <input type="number" class="form-control" id="radius" value="10" min="1" max="50">
                       </div>
-                      <div class="col-md-3">
-                        <div class="form-group">
-                          <label>&nbsp;</label>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="studentOnly" checked>
-                            <label class="form-check-label" for="studentOnly">
-                              Student Events Only
-                            </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="form-group">
-                          <label>&nbsp;</label>
-                          <button type="submit" class="btn btn-primary btn-block">Search</button>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label>&nbsp;</label>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="studentOnly" checked>
+                          <label class="form-check-label" for="studentOnly">Student Events Only</label>
                         </div>
                       </div>
                     </div>
-                  </form>
-                </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="submit" class="btn btn-primary btn-block w-100">Search</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="form-group row">
-
-         <div id="myeventCard" class="row"> <!-- First chart -->
-
+        <div id="myeventCard" class="row"></div>
       </div>
     </div>
+  </main>
 
-        </div>
-    </div>
-  </main>  
-     <!-- End Page Title -->
-<footer>
-
+  <footer>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
-      </div>
+      <div class="credits">Designed by Mrunali</div>
     </div>
-
   </footer>
-  <!-- jQuery -->
-    <script>
-      function bindData(response){
-        var content='';
-       
-          response.forEach(function(event) {
 
-            //var vanueitem=event.vanue;
-       //  debugger;
-            var location =event.venue.name ? event.venue.name : "N/A";
-            var Address;// = vanueitem.address ? vanueitem.address : "N/A";
-            var cost= event.ticketpricing.maxPrice ? event.ticketpricing.maxPrice : "N/A";
-            var eventLink = event.link ? event.link : "#";
-            var linkLabel = event.link ? "View on Skiddle" : "Link Unavailable";
-            
+  <script>
+    const API = 'http://localhost:8080';
 
-          var eventCard ='<div class="col-md-6">  <div class="card feature-card shadow-sm mb-3">' +
-             '<div class="card-body">' +
-             '<h5 class="card-title">' + event.eventname + '</h5>' +
-             '<h6 class="card-subtitle mb-2 text-muted">Type: ' + event.EventCode + '</h6>' +
-             '<p class="card-text">' +  
-            '📍 Location: ' + location + '<br>'+
-           //   '📍 Address: ' + Address + '<br>' 
- 
-              '📅 Date: ' + event.date + '<br>' +
-              '💰 Cost: ' +event.currency +"  "+ cost + '<br>' +
-              '</p>' +
-              '<a href="' + eventLink + '" class="btn btn-success" target="_blank" rel="noopener">' + linkLabel + '</a>' +
-              '</div>' +
-              '</div>' +
-              '</div>' ;
+    function bindData(response) {
+      var content = '';
+      if (!response || response.length === 0) {
+        content = '<div class="col-12"><div class="alert alert-info">No events found for this location.</div></div>';
+      } else {
+        response.forEach(function(event) {
+          var location = event.venue && event.venue.name ? event.venue.name : "N/A";
+          var cost = event.ticketpricing && event.ticketpricing.maxPrice ? event.ticketpricing.maxPrice : "N/A";
+          var eventLink = event.link ? event.link : "#";
+          var linkLabel = event.link ? "View on Skiddle" : "Link Unavailable";
 
-              content += eventCard;
-          });
-        
-        $('#myeventCard').html(content);
-      }
-
-
-
-      function searchEvents(lat, lon, radius, studentOnly) {
-        var url = "http://localhost:8081/skiddleEventData/search?lat=" + lat + "&lon=" + lon + "&radius=" + radius;
-        if (studentOnly) {
-          url += "&studentOnly=true";
-        }
-
-        $.ajax({
-          url: url,
-          type: "GET",
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          success: function(response) {
-            bindData(response.results);
-            console.log("Event Get data successfully:", response);
-          },
-          error: function(xhr, status, error) {
-            console.error("Error getting data for events:", error);
-            alert("Error loading events. Please try again.");
-          }
+          content += '<div class="col-md-6"><div class="card feature-card shadow-sm mb-3"><div class="card-body">' +
+            '<h5 class="card-title">' + event.eventname + '</h5>' +
+            '<h6 class="card-subtitle mb-2 text-muted">Type: ' + event.EventCode + '</h6>' +
+            '<p class="card-text">' +
+            '📍 Location: ' + location + '<br>' +
+            '📅 Date: ' + event.date + '<br>' +
+            '💰 Cost: ' + event.currency + ' ' + cost +
+            '</p>' +
+            '<a href="' + eventLink + '" class="btn btn-success" target="_blank" rel="noopener">' + linkLabel + '</a>' +
+            '</div></div></div>';
         });
       }
+      $('#myeventCard').html(content);
+    }
 
-      function geocodeLocation(location, callback) {
-        $.ajax({
-          url: "https://nominatim.openstreetmap.org/search",
-          type: "GET",
-          data: {
-            q: location,
-            format: "json",
-            limit: 1
-          },
-          success: function(response) {
-            if (response && response.length > 0) {
-              callback(response[0].lat, response[0].lon);
-            } else {
-              alert("Location not found. Please try a different location.");
-            }
-          },
-          error: function() {
-            alert("Error finding location. Please try again.");
-          }
-        });
-      }
+    function searchEvents(lat, lon, radius, studentOnly) {
+      var url = API + "/skiddleEventData/search?lat=" + lat + "&lon=" + lon + "&radius=" + radius;
+      if (studentOnly) url += "&studentOnly=true";
+      $('#myeventCard').html('<div class="col-12 text-center"><p>Loading events...</p></div>');
+      $.ajax({
+        url: url, type: "GET", dataType: "json",
+        success: function(r) { bindData(r.results); },
+        error: function() { $('#myeventCard').html('<div class="col-12"><div class="alert alert-danger">Error loading events. Please try again.</div></div>'); }
+      });
+    }
 
-$(document).ready(function () {
-
-      // Check if user is logged in
+    $(document).ready(function () {
       var user = localStorage.getItem('user');
       var currentUser = null;
       if (user) {
@@ -216,104 +151,57 @@ $(document).ready(function () {
         loadSubscriptionStatus(user.email);
       } else {
         $('#loginBtn').show();
-        $('#eventRegisterBtn').hide();
-        $('#userWelcome').hide();
-        $('#subscriptionStatus').hide();
-        $('#subscribeBtn').hide();
-        $('#logoutBtn').hide();
+        $('#eventRegisterBtn, #userWelcome, #subscriptionStatus, #subscribeBtn, #logoutBtn').hide();
       }
 
-      // Logout functionality
       $('#logoutBtn').on('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('user');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
+        localStorage.clear();
         alert('Logged out successfully!');
         window.location.href = 'index.html';
       });
 
       $('#subscribeBtn').on('click', function(e) {
         e.preventDefault();
-        if (!currentUser || !currentUser.email) {
-          alert('Please login to subscribe.');
-          return;
-        }
-
-        var payload = {
-          name: currentUser.name,
-          emailId: currentUser.email
-        };
-
+        if (!currentUser) { alert('Please login to subscribe.'); return; }
         $.ajax({
-          url: "http://localhost:8081/students/subscribe",
-          type: "POST",
+          url: API + "/students/subscribe", type: "POST",
           contentType: "application/json; charset=utf-8",
-          data: JSON.stringify(payload),
-          success: function(response) {
-            if (response.success) {
-              updateSubscriptionUI(true);
-            } else {
-              alert(response.message || 'Subscription failed.');
-            }
-          },
-          error: function(xhr) {
-            var errorMsg = 'Subscription failed.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-              errorMsg = xhr.responseJSON.message;
-            }
-            alert(errorMsg);
-          }
+          data: JSON.stringify({ name: currentUser.name, emailId: currentUser.email }),
+          success: function(r) { if (r.success) updateSubscriptionUI(true); else alert(r.message || 'Failed.'); },
+          error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Failed.'); }
         });
       });
 
-      // Load default events (Nottingham area, student events only)
       searchEvents(52.950001, -1.150000, 10, true);
 
-      // Handle search form submission
       $('#searchForm').on('submit', function(e) {
         e.preventDefault();
-
         var cityCoords = $('#citySelect').val().split(',');
-        var lat = parseFloat(cityCoords[0]);
-        var lon = parseFloat(cityCoords[1]);
-        var radius = $('#radius').val();
-        var studentOnly = $('#studentOnly').is(':checked');
-
-        searchEvents(lat, lon, radius, studentOnly);
+        searchEvents(parseFloat(cityCoords[0]), parseFloat(cityCoords[1]), $('#radius').val(), $('#studentOnly').is(':checked'));
       });
-
-        });
+    });
 
     function loadSubscriptionStatus(email) {
       $.ajax({
-        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
+        url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
         type: "GET",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          var subscribed = response.data && response.data.subscribed === true;
-          updateSubscriptionUI(subscribed);
-        },
-        error: function() {
-          updateSubscriptionUI(false);
-        }
+        success: function(r) { updateSubscriptionUI(r.data && r.data.subscribed === true); },
+        error: function() { updateSubscriptionUI(false); }
       });
     }
 
     function updateSubscriptionUI(subscribed) {
+      var user = localStorage.getItem('user');
+      if (user) { var u = JSON.parse(user); localStorage.setItem('subscribed_' + u.email, subscribed ? 'true' : 'false'); }
       if (subscribed) {
-        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscriptionStatus').text('Subscribed ✅').css('color', '#198754').show();
         $('#subscribeBtn').hide();
       } else {
         $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
         $('#subscribeBtn').show();
       }
     }
-
-
-    </script>
-    
+  </script>
 </body>
-
 </html>

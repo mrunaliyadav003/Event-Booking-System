@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>My Bookings - Student Meet Up</title>
+  <title>Meet-Up | My Bookings</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
@@ -17,7 +17,6 @@
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
@@ -25,7 +24,6 @@
           <li><a href="MyBookings.html" class="active">My Bookings</a></li>
         </ul>
       </nav>
-
       <div id="authButtons">
         <a class="btn-getstarted" href="Login.html" id="loginBtn">Login</a>
         <a class="btn-getstarted" href="EventRegisterList.html" id="eventRegisterBtn" style="display:none;">Event Register</a>
@@ -56,8 +54,7 @@
               <th>Action</th>
             </tr>
           </thead>
-          <tbody>
-          </tbody>
+          <tbody></tbody>
         </table>
       </div>
     </div>
@@ -74,18 +71,17 @@
   <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
   <script>
+    const API = 'http://localhost:8080';
+
     $(document).ready(function () {
-      // Check authentication
       var user = localStorage.getItem('user');
       if (!user) {
         alert('Please login to view your bookings');
         window.location.href = 'Login.html';
         return;
       }
-
       user = JSON.parse(user);
 
-      // Update header
       $('#loginBtn').hide();
       $('#eventRegisterBtn').show();
       $('#userWelcome').text('Welcome, ' + user.name).show();
@@ -93,7 +89,6 @@
       $('#logoutBtn').show();
       loadSubscriptionStatus(user.email);
 
-      // Logout functionality
       $('#logoutBtn').on('click', function(e) {
         e.preventDefault();
         localStorage.clear();
@@ -102,114 +97,74 @@
 
       $('#subscribeBtn').on('click', function(e) {
         e.preventDefault();
-        if (!user || !user.email) {
-          alert('Please login to subscribe.');
-          return;
-        }
-
-        var payload = {
-          name: user.name,
-          emailId: user.email
-        };
-
         $.ajax({
-          url: "http://localhost:8081/students/subscribe",
-          type: "POST",
+          url: API + "/students/subscribe", type: "POST",
           contentType: "application/json; charset=utf-8",
-          data: JSON.stringify(payload),
-          success: function(response) {
-            if (response.success) {
-              updateSubscriptionUI(true);
-            } else {
-              alert(response.message || 'Subscription failed.');
-            }
-          },
-          error: function(xhr) {
-            var errorMsg = 'Subscription failed.';
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-              errorMsg = xhr.responseJSON.message;
-            }
-            alert(errorMsg);
-          }
+          data: JSON.stringify({ name: user.name, emailId: user.email }),
+          success: function(r) { if (r.success) updateSubscriptionUI(true); else alert(r.message || 'Failed.'); },
+          error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Failed.'); }
         });
       });
 
-      // Load user's bookings
       loadMyBookings(user.email);
     });
 
     function formatEventType(type) {
-      if (!type) {
-        return '';
-      }
+      if (!type) return '';
       return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
 
     function formatDate(value) {
-      if (!value) {
-        return '-';
-      }
+      if (!value) return '-';
       var date = new Date(value);
-      if (isNaN(date.getTime())) {
-        return '-';
-      }
-      return date.toLocaleDateString("nl", {day:"2-digit", month:"2-digit", year:"numeric"});
+      return isNaN(date.getTime()) ? '-' : date.toLocaleDateString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric"});
     }
 
     function loadMyBookings(email) {
       $.ajax({
-        url: "http://localhost:8081/Booking/getMyBookings?email=" + encodeURIComponent(email),
+        url: API + "/Booking/getMyBookings?email=" + encodeURIComponent(email),
         type: "GET",
         contentType: "application/json; charset=utf-8",
         success: function(response) {
-          var content = '';
           var bookings = response.data || [];
-
+          var content = '';
           if (bookings.length > 0) {
-            bookings.forEach(function(booking) {
+            bookings.forEach(function(b) {
               content += '<tr>';
-              content += '<td>' + booking.title + '</td>';
-              content += '<td>' + formatEventType(booking.type) + '</td>';
-              content += '<td>' + formatDate(booking.date) + '</td>';
-              content += '<td>' + booking.location + '</td>';
-              content += '<td>' + booking.cost + '</td>';
-              content += '<td>' + booking.numberOfTickets + '</td>';
-              content += '<td>' + formatDate(booking.bookingDate) + '</td>';
-              content += '<td><button class="btn btn-danger btn-sm" onclick="cancelBooking(\'' + booking.id + '\')">Cancel</button></td>';
+              content += '<td>' + (b.title || '-') + '</td>';
+              content += '<td>' + formatEventType(b.type) + '</td>';
+              content += '<td>' + formatDate(b.date) + '</td>';
+              content += '<td>' + (b.location || '-') + '</td>';
+              content += '<td>' + (b.cost == 0 ? 'Free' : b.cost) + '</td>';
+              content += '<td>' + (b.numberOfTickets || 1) + '</td>';
+              content += '<td>' + formatDate(b.bookingDate) + '</td>';
+              content += '<td><button class="btn btn-danger btn-sm" onclick="cancelBooking(\'' + b.id + '\')">Cancel</button></td>';
               content += '</tr>';
             });
           } else {
             content = '<tr><td colspan="8" class="text-center">No bookings found. <a href="Event.html">Browse Events</a></td></tr>';
           }
-
           $('#bookingsTable tbody').html(content);
           $('#bookingsTable').DataTable();
         },
-        error: function(xhr, status, error) {
-          console.error("Error loading bookings:", error);
-          alert("Error loading your bookings");
-        }
+        error: function() { alert("Error loading your bookings"); }
       });
     }
 
     function loadSubscriptionStatus(email) {
       $.ajax({
-        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
+        url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
         type: "GET",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          var subscribed = response.data && response.data.subscribed === true;
-          updateSubscriptionUI(subscribed);
-        },
-        error: function() {
-          updateSubscriptionUI(false);
-        }
+        success: function(r) { updateSubscriptionUI(r.data && r.data.subscribed === true); },
+        error: function() { updateSubscriptionUI(false); }
       });
     }
 
     function updateSubscriptionUI(subscribed) {
+      var user = JSON.parse(localStorage.getItem('user'));
+      if (user) localStorage.setItem('subscribed_' + user.email, subscribed ? 'true' : 'false');
       if (subscribed) {
-        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscriptionStatus').text('Subscribed ✅').css('color', '#198754').show();
         $('#subscribeBtn').hide();
       } else {
         $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
@@ -218,35 +173,18 @@
     }
 
     function cancelBooking(bookingId) {
-      if (!confirm('Are you sure you want to cancel this booking?')) {
-        return;
-      }
-
+      if (!confirm('Are you sure you want to cancel this booking?')) return;
       var userEmail = JSON.parse(localStorage.getItem('user')).email;
-
       $.ajax({
-        url: "http://localhost:8081/Booking/cancel/" + bookingId + "?email=" + encodeURIComponent(userEmail),
+        url: API + "/Booking/cancel/" + bookingId + "?email=" + encodeURIComponent(userEmail),
         type: "DELETE",
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-          if (response.success) {
-            alert("Booking cancelled successfully!");
-            location.reload();
-          } else {
-            alert("Cancellation failed: " + response.message);
-          }
+        success: function(r) {
+          if (r.success) { alert("Booking cancelled successfully!"); location.reload(); }
+          else { alert("Cancellation failed: " + r.message); }
         },
-        error: function(xhr, status, error) {
-          var errorMsg = "Error cancelling booking";
-          if (xhr.responseJSON && xhr.responseJSON.message) {
-            errorMsg = xhr.responseJSON.message;
-          }
-          alert(errorMsg);
-          console.error("Error:", error);
-        }
+        error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || "Error cancelling booking"); }
       });
     }
   </script>
-
 </body>
 </html>

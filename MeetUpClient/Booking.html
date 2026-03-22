@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <!-- Fix 3: Proper app name -->
   <title>Meet-Up | Book Event</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -12,7 +11,6 @@
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <style>
-    /* Fix 2: Clean weather display replacing "Location not found" */
     .weather-display {
       display: flex;
       align-items: center;
@@ -25,17 +23,17 @@
       color: #1565a8;
       font-size: 14px;
     }
-    .weather-display .weather-icon {
-      font-size: 26px;
-    }
-    .weather-display .weather-text strong {
-      display: block;
+    .weather-display .weather-icon { font-size: 26px; }
+    .weather-display .weather-text strong { display: block; font-size: 14px; margin-bottom: 2px; }
+    .weather-display .weather-text span { font-size: 13px; color: #2d7ab5; }
+    .not-subscribed-alert {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      color: #856404;
       font-size: 14px;
-      margin-bottom: 2px;
-    }
-    .weather-display .weather-text span {
-      font-size: 13px;
-      color: #2d7ab5;
     }
   </style>
 </head>
@@ -54,11 +52,16 @@
       <div class="heading">
         <div class="container">
           <form>
-            <!-- Event info -->
             <div class="ticket-form-wrapper" data-aos="fade-up" data-aos-delay="200">
               <div id="myeventCard" class="event-info mb-3"></div>
 
-              <!-- Fix 2: Proper weather display -->
+              <!-- Subscription warning -->
+              <div id="notSubscribedAlert" class="not-subscribed-alert" style="display:none;">
+                ⚠️ You need to <strong>subscribe</strong> before booking events.
+                <a href="Event.html" class="btn btn-sm btn-warning ms-2">Go Subscribe</a>
+              </div>
+
+              <!-- Weather display -->
               <div id="weatherInfo" class="weather-display" style="display:none;">
                 <div class="weather-icon">🌤</div>
                 <div class="weather-text">
@@ -68,34 +71,36 @@
               </div>
             </div>
 
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label"></label>
-              <div class="col-sm-3">
-                <h1 class="heading-title">Booking Details</h1>
+            <div id="bookingFormSection">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-3">
+                  <h1 class="heading-title">Booking Details</h1>
+                </div>
               </div>
-            </div>
 
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label">Register Email-Id</label>
-              <div class="col-sm-3">
-                <input type="email" class="form-control" id="inputBookingemailId" placeholder="Enter Register Email-id">
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Register Email-Id</label>
+                <div class="col-sm-3">
+                  <input type="email" class="form-control" id="inputBookingemailId" placeholder="Enter Register Email-id">
+                </div>
               </div>
-            </div>
-            <br>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label">Number of Tickets</label>
-              <div class="col-sm-3">
-                <select name="quantity" id="quantity" class="form-control" required="">
-                  <option value="1">1 Ticket</option>
-                </select>
+              <br>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Number of Tickets</label>
+                <div class="col-sm-3">
+                  <select name="quantity" id="quantity" class="form-control" required="">
+                    <option value="1">1 Ticket</option>
+                  </select>
+                </div>
               </div>
-            </div>
-            <br>
-            <div class="form-group row">
-              <label class="col-sm-2 col-form-label"></label>
-              <div class="col-sm-3">
-                <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
-                <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+              <br>
+              <div class="form-group row">
+                <label class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-3">
+                  <input type="button" onclick="AddRecord()" class="btn btn-primary" value="Submit">
+                  <input type="button" class="btn btn-success" value="Cancel" onclick="window.location.href='Event.html'">
+                </div>
               </div>
             </div>
 
@@ -120,15 +125,40 @@
   </div>
 
   <script>
+    const API = 'http://localhost:8080';
+
     $(document).ready(function () {
       if (!localStorage.getItem('user')) {
         alert('Please login to book events');
         window.location.href = 'Login.html';
         return;
       }
+
       var user = JSON.parse(localStorage.getItem('user'));
       $('#inputBookingemailId').val(user.email);
       $('#inputBookingemailId').prop('readonly', true);
+
+      // Check subscription status before allowing booking
+      var savedSub = localStorage.getItem('subscribed_' + user.email);
+      if (savedSub === 'false') {
+        // Show warning, hide booking form
+        $('#notSubscribedAlert').show();
+        $('#bookingFormSection').hide();
+      } else if (savedSub === null) {
+        // Verify from server
+        $.ajax({
+          url: API + "/students/subscription?emailId=" + encodeURIComponent(user.email),
+          type: "GET",
+          success: function(r) {
+            var subscribed = r.data && r.data.subscribed === true;
+            localStorage.setItem('subscribed_' + user.email, subscribed ? 'true' : 'false');
+            if (!subscribed) {
+              $('#notSubscribedAlert').show();
+              $('#bookingFormSection').hide();
+            }
+          }
+        });
+      }
     });
 
     function getUrlParameter(name) {
@@ -143,10 +173,10 @@
 
     function LoadData(id) {
       $.ajax({
-        url: "http://localhost:8081/events/getById?id=" + id,
+        url: API + "/events/getById?id=" + id,
         type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
         success: function(response) { bindData(response); },
-        error: function(xhr, status, error) { alert(error); console.error("Error:", error); }
+        error: function(xhr, status, error) { alert(error); }
       });
     }
 
@@ -174,16 +204,14 @@
       $('#eventLocation').val(response.location);
       $('#eventCost').val(response.cost);
       $('#eventpublisherId').val(response.publisherId);
-
       loadWeather(response.location, response.date);
     }
 
-    // Fix 2: Clean weather display
     function loadWeather(location, dateValue) {
       if (!location) return;
       var dateStr = '';
       if (dateValue) { try { dateStr = new Date(dateValue).toISOString().split('T')[0]; } catch(e){} }
-      var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+      var url = API + "/external/weather?location=" + encodeURIComponent(location);
       if (dateStr) url += "&date=" + dateStr;
       $.ajax({
         url: url, type: "GET",
@@ -226,16 +254,14 @@
       if (!email) { alert("Email is required."); return; }
       if (!quantity || quantity < 1) { alert("Please select at least 1 ticket."); return; }
 
-      var requestData = {
-        eventId: eventId, emailId: email, publisherId: publisherId,
-        bookingDate: bookingDate, numberOfTickets: quantity, sequenceNo: 1,
-        title: Title, type: Type, date: date, location: location, cost: cost
-      };
-
       $.ajax({
-        url: "http://localhost:8081/Booking/create", type: "POST",
+        url: API + "/Booking/create", type: "POST",
         contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(requestData),
+        data: JSON.stringify({
+          eventId: eventId, emailId: email, publisherId: publisherId,
+          bookingDate: bookingDate, numberOfTickets: quantity, sequenceNo: 1,
+          title: Title, type: Type, date: date, location: location, cost: cost
+        }),
         success: function(response) {
           if (response.success) {
             alert("Booking created successfully!");

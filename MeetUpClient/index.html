@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <!-- Fix 3: Proper app name -->
   <title>Meet-Up | Student Event Booking</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -12,7 +11,6 @@
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <style>
-    /* Fix 2 & 4: Info badges */
     .weather-info-badge {
       display: inline-block;
       background: #e8f4fd;
@@ -42,9 +40,10 @@
       </a>
       <nav id="navmenu" class="navmenu">
         <ul>
-          <li><a href="Event.html" class="active">Event</a></li>
-          <li><a href="SkiddleEvent.html" class="active">Skiddle Event</a></li>
+          <li><a href="Event.html">Event</a></li>
+          <li><a href="SkiddleEvent.html">Skiddle Event</a></li>
           <li><a href="MyBookings.html" id="myBookingsLink" style="display:none;">My Bookings</a></li>
+          <li><a href="Admin.html" id="adminNavLink" style="display:none; color:#dc3545; font-weight:bold;">Admin</a></li>
         </ul>
       </nav>
       <div id="authButtons">
@@ -68,7 +67,7 @@
           </div>
           <div class="col-lg-4" data-aos="fade-left" data-aos-delay="300">
             <div class="hero-image-wrapper">
-              <img src="img/gallery-7.webp" alt="Global Tech Summit" class="img-fluid hero-image">
+              <img src="img/gallery-7.webp" alt="Meet-Up Events" class="img-fluid hero-image">
             </div>
           </div>
         </div>
@@ -84,9 +83,13 @@
   </footer>
 
   <script>
+    const ADMIN_EMAIL = 'admin@localhost.com';
+    const API = 'http://localhost:8080';
+
     $(document).ready(function () {
       var user = localStorage.getItem('user');
       var currentUser = null;
+
       if (user) {
         user = JSON.parse(user);
         currentUser = user;
@@ -97,22 +100,19 @@
         $('#subscriptionStatus').show();
         $('#logoutBtn').show();
         loadSubscriptionStatus(user.email);
+
+        // Show admin link for admin
+        if (user.email === ADMIN_EMAIL) {
+          $('#adminNavLink').show();
+        }
       } else {
         $('#loginBtn').show();
-        $('#eventRegisterBtn').hide();
-        $('#myBookingsLink').hide();
-        $('#userWelcome').hide();
-        $('#subscriptionStatus').hide();
-        $('#subscribeBtn').hide();
-        $('#logoutBtn').hide();
+        $('#eventRegisterBtn, #myBookingsLink, #adminNavLink, #userWelcome, #subscriptionStatus, #subscribeBtn, #logoutBtn').hide();
       }
 
       $('#logoutBtn').on('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('user');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
+        localStorage.clear();
         alert('Logged out successfully!');
         location.reload();
       });
@@ -121,34 +121,49 @@
         e.preventDefault();
         if (!currentUser || !currentUser.email) { alert('Please login to subscribe.'); return; }
         $.ajax({
-          url: "http://localhost:8081/students/subscribe", type: "POST",
+          url: API + "/students/subscribe", type: "POST",
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify({ name: currentUser.name, emailId: currentUser.email }),
-          success: function(r) { if (r.success) updateSubscriptionUI(true); else alert(r.message || 'Subscription failed.'); },
+          success: function(r) {
+            if (r.success) {
+              updateSubscriptionUI(true);
+              loadAllEvents();
+            } else {
+              alert(r.message || 'Subscription failed.');
+            }
+          },
           error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Subscription failed.'); }
         });
       });
 
-      $.ajax({
-        url: "http://localhost:8081/events/getAll", type: "GET",
-        contentType: "application/json; charset=utf-8", dataType: "json",
-        success: function(response) { bindData(response); },
-        error: function(xhr, status, error) { console.error("Error getting data for events:", error); }
-      });
+      loadAllEvents();
     });
+
+    function loadAllEvents() {
+      $.ajax({
+        url: API + "/events/getAll", type: "GET", dataType: "json",
+        success: bindData,
+        error: function() { console.error("Error loading events"); }
+      });
+    }
 
     function loadSubscriptionStatus(email) {
       $.ajax({
-        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
-        type: "GET", contentType: "application/json; charset=utf-8",
+        url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
+        type: "GET",
         success: function(r) { updateSubscriptionUI(r.data && r.data.subscribed === true); },
         error: function() { updateSubscriptionUI(false); }
       });
     }
 
     function updateSubscriptionUI(subscribed) {
+      var user = localStorage.getItem('user');
+      if (user) {
+        var u = JSON.parse(user);
+        localStorage.setItem('subscribed_' + u.email, subscribed ? 'true' : 'false');
+      }
       if (subscribed) {
-        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscriptionStatus').text('Subscribed ✅').css('color', '#198754').show();
         $('#subscribeBtn').hide();
       } else {
         $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();
@@ -161,12 +176,11 @@
       return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
 
-    // Fix 2: Weather fetch
     function fetchWeatherForCard(location, date, badgeId) {
       if (!location) { $('#' + badgeId).text('🌤 Location not set'); return; }
       var dateStr = '';
       if (date) { try { dateStr = new Date(date).toISOString().split('T')[0]; } catch(e){} }
-      var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+      var url = API + "/external/weather?location=" + encodeURIComponent(location);
       if (dateStr) url += "&date=" + dateStr;
       $.ajax({
         url: url, type: "GET",
@@ -184,12 +198,10 @@
 
     function bindData(response) {
       var content = '';
-      // Show only the latest event on homepage (original behaviour)
+      // Show latest event on homepage
       response.forEach(function(event, index) {
         var ticketcont = event.maxNumberOfParticipants - event.bookingCount;
         var weatherBadgeId = 'hero_weather_' + index;
-
-        // Fix 4: Review count
         var messageCount = event.ratingCount || 0;
         var messageBadge = messageCount > 0
           ? '💬 ' + messageCount + ' review' + (messageCount !== 1 ? 's' : '')

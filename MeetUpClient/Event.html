@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <!-- Fix 3: Proper app name -->
   <title>Meet-Up | Events</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
@@ -12,7 +11,6 @@
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <style>
-    /* Fix 1: Search bar spacing */
     .search-row-fixed {
       display: flex;
       flex-wrap: wrap;
@@ -46,7 +44,6 @@
       font-size: 14px;
       white-space: nowrap;
     }
-    /* Fix 2 & 4: Info badges on card */
     .weather-info-badge {
       display: inline-block;
       background: #e8f4fd;
@@ -65,6 +62,19 @@
       font-size: 13px;
       margin: 2px 0 8px 0;
     }
+    /* Subscribe lock style */
+    .btn-subscribe-lock {
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .btn-subscribe-lock:hover {
+      background: #5a6268;
+    }
   </style>
 </head>
 <body class="terms-page">
@@ -79,6 +89,7 @@
           <li><a href="index.html">Home</a></li>
           <li><a href="Event.html" class="active">Event</a></li>
           <li><a href="SkiddleEvent.html">Skiddle Event</a></li>
+          <li><a href="Admin.html" id="adminNavLink" style="display:none; color:#dc3545; font-weight:bold;">Admin</a></li>
         </ul>
       </nav>
       <div id="authButtons">
@@ -96,7 +107,6 @@
     <div class="page-title">
       <div class="container">
         <br>
-        <!-- Fix 1: Properly spaced search bars -->
         <div class="search-row-fixed">
           <div class="search-item">
             <input type="text" id="Searchevent" placeholder="Search...">
@@ -118,7 +128,6 @@
             <button onclick="SearchLocation()" class="btn btn-primary">Search</button>
           </div>
         </div>
-
         <div id="myeventCard" class="row"></div>
       </div>
     </div>
@@ -132,17 +141,21 @@
   </footer>
 
   <script>
+    const ADMIN_EMAIL = 'admin@localhost.com';
+    const API = 'http://localhost:8080';
+    var isSubscribed = false;
+    var isLoggedIn = false;
+
     function formatEventType(type) {
       if (!type) return '';
       return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
 
-    // Fix 2: Weather fetch per card
     function fetchWeatherForCard(location, date, badgeId) {
       if (!location) { $('#' + badgeId).text('🌤 Location not set'); return; }
       var dateStr = '';
       if (date) { try { dateStr = new Date(date).toISOString().split('T')[0]; } catch(e){} }
-      var url = "http://localhost:8081/external/weather?location=" + encodeURIComponent(location);
+      var url = API + "/external/weather?location=" + encodeURIComponent(location);
       if (dateStr) url += "&date=" + dateStr;
       $.ajax({
         url: url, type: "GET",
@@ -163,16 +176,22 @@
       response.forEach(function(event, index) {
         var ticketcont = event.maxNumberOfParticipants - event.bookingCount;
         var weatherBadgeId = 'weather_' + index;
-
-        // Fix 4: Review/message count
         var messageCount = event.ratingCount || 0;
         var messageBadge = messageCount > 0
           ? '💬 ' + messageCount + ' review' + (messageCount !== 1 ? 's' : '')
           : '💬 No reviews yet';
 
-        var registerBtn = event.bookingCount < event.maxNumberOfParticipants
-          ? '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Registered</a>'
-          : '<a href="#" class="btn btn-warning">Event Full</a>';
+        // Subscription-aware register button
+        var registerBtn = '';
+        if (!isLoggedIn) {
+          registerBtn = '<a href="Login.html" class="btn btn-secondary">Login to Book</a>';
+        } else if (!isSubscribed) {
+          registerBtn = '<button class="btn-subscribe-lock" onclick="alert(\'You must subscribe first to book events. Click the Subscribe button above!\')">🔒 Subscribe to Book</button>';
+        } else if (event.bookingCount >= event.maxNumberOfParticipants) {
+          registerBtn = '<a href="#" class="btn btn-warning">Event Full</a>';
+        } else {
+          registerBtn = '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Register</a>';
+        }
 
         content += '<div class="col-md-6">' +
           '<div class="card feature-card shadow-sm mb-3">' +
@@ -199,55 +218,53 @@
     }
 
     function SearchEvent() {
-      $.ajax({ url: "http://localhost:8081/events/SeachByText?text=" + $('#Searchevent').val(),
-        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
-        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+      $.ajax({ url: API + "/events/SeachByText?text=" + $('#Searchevent').val(),
+        type: "GET", dataType: "json", success: bindData });
     }
     function SearchDate() {
-      $.ajax({ url: "http://localhost:8081/events/getByDate?date=" + $('#SearchDate').val(),
-        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
-        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+      $.ajax({ url: API + "/events/getByDate?date=" + $('#SearchDate').val(),
+        type: "GET", dataType: "json", success: bindData });
     }
     function SearchLocation() {
-      $.ajax({ url: "http://localhost:8081/events/getLocation?location=" + $('#SearchLocation').val(),
-        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
-        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+      $.ajax({ url: API + "/events/getLocation?location=" + $('#SearchLocation').val(),
+        type: "GET", dataType: "json", success: bindData });
     }
     function SearchType() {
       var val = $('#SearchType').val().trim();
       if (val.toLowerCase() === 'social event') val = 'other';
-      $.ajax({ url: "http://localhost:8081/events/getType?type=" + val,
-        type: "GET", contentType: "application/json; charset=utf-8", dataType: "json",
-        success: bindData, error: function(xhr, s, e) { console.error(e); } });
+      $.ajax({ url: API + "/events/getType?type=" + val,
+        type: "GET", dataType: "json", success: bindData });
     }
 
     $(document).ready(function () {
       var user = localStorage.getItem('user');
       var currentUser = null;
+
       if (user) {
         user = JSON.parse(user);
         currentUser = user;
+        isLoggedIn = true;
+
         $('#loginBtn').hide();
         $('#eventRegisterBtn').show();
         $('#userWelcome').text('Welcome, ' + user.name).show();
         $('#subscriptionStatus').show();
         $('#logoutBtn').show();
         loadSubscriptionStatus(user.email);
+
+        // Show admin link for admin user
+        if (user.email === ADMIN_EMAIL) {
+          $('#adminNavLink').show();
+          $('#eventRegisterBtn').show();
+        }
       } else {
         $('#loginBtn').show();
-        $('#eventRegisterBtn').hide();
-        $('#userWelcome').hide();
-        $('#subscriptionStatus').hide();
-        $('#subscribeBtn').hide();
-        $('#logoutBtn').hide();
+        $('#eventRegisterBtn, #userWelcome, #subscriptionStatus, #subscribeBtn, #logoutBtn').hide();
       }
 
       $('#logoutBtn').on('click', function(e) {
         e.preventDefault();
-        localStorage.removeItem('user');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userEmail');
+        localStorage.clear();
         alert('Logged out successfully!');
         location.reload();
       });
@@ -256,34 +273,57 @@
         e.preventDefault();
         if (!currentUser || !currentUser.email) { alert('Please login to subscribe.'); return; }
         $.ajax({
-          url: "http://localhost:8081/students/subscribe", type: "POST",
+          url: API + "/students/subscribe", type: "POST",
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify({ name: currentUser.name, emailId: currentUser.email }),
-          success: function(r) { if (r.success) updateSubscriptionUI(true); else alert(r.message || 'Subscription failed.'); },
+          success: function(r) {
+            if (r.success) {
+              updateSubscriptionUI(true);
+              // Reload events to update buttons
+              loadAllEvents();
+            } else {
+              alert(r.message || 'Subscription failed.');
+            }
+          },
           error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Subscription failed.'); }
         });
       });
 
-      $.ajax({
-        url: "http://localhost:8081/events/getAll", type: "GET",
-        contentType: "application/json; charset=utf-8", dataType: "json",
-        success: bindData,
-        error: function(xhr, status, error) { console.error("Error getting data for events:", error); }
-      });
+      loadAllEvents();
     });
+
+    function loadAllEvents() {
+      $.ajax({
+        url: API + "/events/getAll", type: "GET", dataType: "json",
+        success: bindData,
+        error: function() { console.error("Error loading events"); }
+      });
+    }
 
     function loadSubscriptionStatus(email) {
       $.ajax({
-        url: "http://localhost:8081/students/subscription?emailId=" + encodeURIComponent(email),
-        type: "GET", contentType: "application/json; charset=utf-8",
-        success: function(r) { updateSubscriptionUI(r.data && r.data.subscribed === true); },
+        url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
+        type: "GET",
+        success: function(r) {
+          var subscribed = r.data && r.data.subscribed === true;
+          updateSubscriptionUI(subscribed);
+          // Reload events after knowing subscription status
+          loadAllEvents();
+        },
         error: function() { updateSubscriptionUI(false); }
       });
     }
 
     function updateSubscriptionUI(subscribed) {
+      isSubscribed = subscribed;
+      // Save to localStorage for other pages
+      var user = localStorage.getItem('user');
+      if (user) {
+        var u = JSON.parse(user);
+        localStorage.setItem('subscribed_' + u.email, subscribed ? 'true' : 'false');
+      }
       if (subscribed) {
-        $('#subscriptionStatus').text('Subscribed').css('color', '#198754').show();
+        $('#subscriptionStatus').text('Subscribed ✅').css('color', '#198754').show();
         $('#subscribeBtn').hide();
       } else {
         $('#subscriptionStatus').text('Not Subscribed').css('color', '#b02a37').show();

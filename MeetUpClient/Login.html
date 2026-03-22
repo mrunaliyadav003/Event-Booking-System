@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Login - Student Meet Up</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>Meet-Up | Login</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
@@ -15,25 +13,19 @@
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="index.html">Home</a></li>
         </ul>
       </nav>
-
       <a class="btn-getstarted" href="UserRegister.html">Register</a>
-
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
     <div class="page-title">
       <div class="container">
         <br><br><br>
@@ -63,80 +55,71 @@
         </div>
       </div>
     </div>
-
   </main>
 
   <footer>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali
-      </div>
+      <div class="credits">Designed by Mrunali</div>
     </div>
   </footer>
 
   <script>
+    const ADMIN_EMAIL = 'admin@localhost.com';
+    const API = 'http://localhost:8080';
+
     $(document).ready(function () {
-      // Check if user is already logged in
       if (localStorage.getItem('user')) {
         window.location.href = 'index.html';
       }
 
       $('#loginForm').on('submit', function (e) {
         e.preventDefault();
-
         var email = $('#email').val();
         var password = $('#password').val();
 
-        var loginData = {
-          email: email,
-          password: password
-        };
-
         $.ajax({
-          url: "http://localhost:8081/auth/login",
+          url: API + "/auth/login",
           type: "POST",
           contentType: "application/json",
-          data: JSON.stringify(loginData),
+          data: JSON.stringify({ email: email, password: password }),
           success: function (response) {
             if (response.success) {
-              // Store user data in localStorage
               localStorage.setItem('user', JSON.stringify(response.data));
               localStorage.setItem('userId', response.data.id);
               localStorage.setItem('userName', response.data.name);
               localStorage.setItem('userEmail', response.data.email);
 
-              var subscriptionPayload = {
-                name: response.data.name,
-                emailId: response.data.email
-              };
-
+              // Check subscription status and save it
               $.ajax({
-                url: "http://localhost:8081/students/subscribe",
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(subscriptionPayload),
-                complete: function () {
-                  // Redirect to home page
+                url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
+                type: "GET",
+                success: function(r) {
+                  var subscribed = r.data && r.data.subscribed === true;
+                  localStorage.setItem('subscribed_' + email, subscribed ? 'true' : 'false');
+                },
+                complete: function() {
                   alert('Login successful!');
-                  window.location.href = 'index.html';
+                  // Redirect admin to admin panel
+                  if (email === ADMIN_EMAIL) {
+                    window.location.href = 'Admin.html';
+                  } else {
+                    window.location.href = 'index.html';
+                  }
                 }
               });
             } else {
               $('#errorMessage').text(response.message).removeClass('d-none');
             }
           },
-          error: function (xhr, status, error) {
+          error: function (xhr) {
             var errorMsg = "Login failed. Please try again.";
-            if (xhr.responseJSON && xhr.responseJSON.message) {
-              errorMsg = xhr.responseJSON.message;
-            }
+            if (xhr.responseJSON && xhr.responseJSON.message) errorMsg = xhr.responseJSON.message;
             $('#errorMessage').text(errorMsg).removeClass('d-none');
           }
         });
       });
     });
   </script>
-
 </body>
 </html>

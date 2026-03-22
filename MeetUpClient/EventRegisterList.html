@@ -1,138 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Index - Student meet Upe</title>
-  <meta name="description" content="">
-  <meta name="keywords" content="">
+  <title>Meet-Up | Event Register List</title>
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/main.css" rel="stylesheet">
   <script src="js/jquery-4.0.0.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
- <!-- DataTables CSS -->
-    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 </head>
 <body class="terms-page">
 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
-
       <a href="index.html" class="logo d-flex align-items-center">
         <h1 class="sitename">Meet-Up</h1>
       </a>
-
-          <a class="btn-getstarted" href="event.html">Event  </a>
-
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="Event.html">Events</a></li>
+        </ul>
+      </nav>
+      <div id="authButtons">
+        <span id="userWelcome" style="margin-right: 10px; font-weight: bold;"></span>
+        <a class="btn-getstarted" href="#" id="logoutBtn">Logout</a>
+      </div>
     </div>
   </header>
 
   <main class="main">
-
-    <!-- Page Title -->
-        <div class="container">
-            <h1 class=" heading-title ">Event Register List</h1>
-            <br>
-          <button class="btn btn-primary" onclick="window.location.href='Register.html'">New Register</button>
-          <button class="btn btn-primary" onclick="window.location.href='BookingList.html'">Booking Register</button>
-                
-          <table id="example" class="table table-striped" style="width:100%">
-  <thead >   
-    <tr  class="table bg-warning">
-      <th scope="col">Publisher Email</th>
-      <th scope="col">Title</th>
-      <th scope="col">Event Date</th>
-      <th scope="col">Location</th>
-      <th scope="col">Cost</th>
-      <th scope="col">Max Number Of Participants</th>
-      <th scope="col">Type</th>
-      <th >Action</th>
-      
-    </tr>
-  </thead>
-  <tbody>
-    </tbody>
-</table>
-
-  
-          </div>
-        </div>
-     <!-- End Page Title -->
+    <div class="container" style="padding-top: 20px;">
+      <h1 class="heading-title">Event Register List</h1>
+      <br>
+      <button class="btn btn-primary" onclick="window.location.href='Register.html'">New Register</button>
+      <button class="btn btn-primary" onclick="window.location.href='BookingList.html'">Booking Register</button>
+      <br><br>
+      <table id="example" class="table table-striped" style="width:100%">
+        <thead>
+          <tr class="table bg-warning">
+            <th>Publisher Email</th>
+            <th>Title</th>
+            <th>Event Date</th>
+            <th>Location</th>
+            <th>Cost</th>
+            <th>Max Participants</th>
+            <th>Booked</th>
+            <th>Type</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </main>
+
+  <footer>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
-      <div class="credits">
-        Designed by Mrunali 
-        
-      </div>
+      <div class="credits">Designed by Mrunali</div>
     </div>
-
   </footer>
-  <!-- jQuery -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>  
-    <script>
-        function formatEventType(type) {
-          if (!type) {
-            return '';
-          }
-          return type.toLowerCase() === 'other' ? 'Social Event' : type;
-        }
 
-        $(document).ready(function () {
-           
- $.ajax({
-      url: "http://localhost:8081/events/getAll",
-      type: "GET",
-      contentType: "application/json; charset=utf-8",
-      dataType: "json",
-      success: function(response) {
-        var content='';
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+  <script>
+    const API = 'http://localhost:8080';
+
+    function formatEventType(type) {
+      if (!type) return '';
+      return type.toLowerCase() === 'other' ? 'Social Event' : type;
+    }
+
+    function formatDate(val) {
+      if (!val) return '-';
+      var d = new Date(val);
+      return isNaN(d.getTime()) ? '-' : d.toLocaleDateString("en-GB", {day:"2-digit", month:"2-digit", year:"numeric"});
+    }
+
+    $(document).ready(function () {
+      // Auth check
+      var user = localStorage.getItem('user');
+      if (!user) { alert('Please login'); window.location.href = 'Login.html'; return; }
+      user = JSON.parse(user);
+      $('#userWelcome').text('Welcome, ' + user.name);
+
+      $('#logoutBtn').on('click', function(e) {
+        e.preventDefault();
+        localStorage.clear();
+        window.location.href = 'Login.html';
+      });
+
+      $.ajax({
+        url: API + "/events/getAll",
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(response) {
+          var content = '';
           response.forEach(function(event) {
+            var isFull = event.bookingCount >= event.maxNumberOfParticipants;
+            var statusBadge = isFull
+              ? '<span class="badge bg-danger ms-1">Full</span>'
+              : '<span class="badge bg-success ms-1">Open</span>';
             content += '<tr>';
             content += '<td>' + event.publisherId + '</td>';
             content += '<td>' + event.title + '</td>';
-            content += '<td>' + event.date + '</td>';
+            content += '<td>' + formatDate(event.date) + '</td>';
             content += '<td>' + event.location + '</td>';
-            content += '<td>' + event.cost + '</td>';
+            content += '<td>' + (event.cost == 0 ? 'Free' : 'GBP ' + event.cost) + '</td>';
             content += '<td>' + event.maxNumberOfParticipants + '</td>';
+            content += '<td>' + event.bookingCount + statusBadge + '</td>';
             content += '<td>' + formatEventType(event.type) + '</td>';
             content += '<td>';
-            content += '<a href="RegisterEdit.html?id='+event.id+'"><button class="btn btn-primary">Edit</button></a>';
-            content += '<Input type="button" onclick="deleteRecord(\''+event.id+'\')"  class="btn btn-danger" value="Delete" /></td>';
+            content += '<a href="RegisterEdit.html?id=' + event.id + '"><button class="btn btn-primary btn-sm me-1">Edit</button></a>';
+            content += '<button onclick="deleteRecord(\'' + event.id + '\')" class="btn btn-danger btn-sm">Delete</button>';
+            content += '</td>';
             content += '</tr>';
           });
           $('#example tbody').html(content);
-          $('#example').DataTable();  
-        console.log("Event Get data successfully:", response);
-      },
-      error: function(xhr, status, error) {
-        console.error("Error getting data for events:", error);
-      }
+          $('#example').DataTable();
+        },
+        error: function() { alert('Error loading events'); }
+      });
     });
 
-        });
-
-
-function deleteRecord(id){
-              //  alert(id) ;
-                $.ajax({
-                url: "http://localhost:8081/events/delete?id="+id,
-                type: "DELETE",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-            success: function(response) {
-                alert("Event deleted successfully!");
-                console.log("Event deleted successfully:", response);
-            },
-            error: function(xhr, status, error) {
-                alert("Error deleting event.");
-                console.error("Error deleting event:", error);
-            }
-          });
+    function deleteRecord(id) {
+      if (!confirm('Are you sure you want to delete this event?')) return;
+      $.ajax({
+        url: API + "/events/delete?id=" + id,
+        type: "DELETE",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function() {
+          alert("Event deleted successfully!");
           location.reload();
-        }
-
-    </script>
-    
+        },
+        error: function() { alert("Error deleting event."); }
+      });
+    }
+  </script>
 </body>
-
 </html>
