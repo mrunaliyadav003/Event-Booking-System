@@ -62,7 +62,6 @@
       font-size: 13px;
       margin: 2px 0 8px 0;
     }
-    /* Subscribe lock style */
     .btn-subscribe-lock {
       background: #6c757d;
       color: white;
@@ -78,7 +77,7 @@
   </style>
 </head>
 <body class="terms-page">
-
+ 
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
       <a href="index.html" class="logo d-flex align-items-center">
@@ -102,7 +101,7 @@
       </div>
     </div>
   </header>
-
+ 
   <main class="main">
     <div class="page-title">
       <div class="container">
@@ -132,25 +131,25 @@
       </div>
     </div>
   </main>
-
+ 
   <footer>
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Meet-Up</strong> <span>All Rights Reserved</span></p>
       <div class="credits">Designed by Mrunali</div>
     </div>
   </footer>
-
+ 
   <script>
     const ADMIN_EMAIL = 'admin@localhost.com';
     const API = 'http://localhost:8080';
     var isSubscribed = false;
     var isLoggedIn = false;
-
+ 
     function formatEventType(type) {
       if (!type) return '';
       return type.toLowerCase() === 'other' ? 'Social Event' : type;
     }
-
+ 
     function fetchWeatherForCard(location, date, badgeId) {
       if (!location) { $('#' + badgeId).text('🌤 Location not set'); return; }
       var dateStr = '';
@@ -170,17 +169,19 @@
         error: function() { $('#' + badgeId).text("🌤 Weather unavailable"); }
       });
     }
-
+ 
     function bindData(response) {
       var content = '';
       response.forEach(function(event, index) {
         var ticketcont = event.maxNumberOfParticipants - event.bookingCount;
         var weatherBadgeId = 'weather_' + index;
-        var messageCount = event.ratingCount || 0;
-        var messageBadge = messageCount > 0
-          ? '💬 ' + messageCount + ' review' + (messageCount !== 1 ? 's' : '')
+ 
+        // ✅ Fix: Show average rating properly rounded to 1 decimal
+        var ratingAvg = event.ratingCount || 0;
+        var messageBadge = ratingAvg > 0
+          ? '⭐ ' + parseFloat(ratingAvg).toFixed(1) + ' / 5 avg rating'
           : '💬 No reviews yet';
-
+ 
         // Subscription-aware register button
         var registerBtn = '';
         if (!isLoggedIn) {
@@ -192,7 +193,7 @@
         } else {
           registerBtn = '<a href="Booking.html?id=' + event.id + '" class="btn btn-primary">Register</a>';
         }
-
+ 
         content += '<div class="col-md-6">' +
           '<div class="card feature-card shadow-sm mb-3">' +
           '<div class="card-body">' +
@@ -209,14 +210,14 @@
           registerBtn + '&nbsp;' +
           '<a href="Rating.html?id=' + event.id + '" class="btn btn-warning">Rating & Feedback</a>' +
           '</div></div></div>';
-
+ 
         (function(loc, dt, bid, i) {
           setTimeout(function() { fetchWeatherForCard(loc, dt, bid); }, 150 * i);
         })(event.location, event.date, weatherBadgeId, index);
       });
       $('#myeventCard').html(content);
     }
-
+ 
     function SearchEvent() {
       $.ajax({ url: API + "/events/SeachByText?text=" + $('#Searchevent').val(),
         type: "GET", dataType: "json", success: bindData });
@@ -235,40 +236,36 @@
       $.ajax({ url: API + "/events/getType?type=" + val,
         type: "GET", dataType: "json", success: bindData });
     }
-
+ 
     $(document).ready(function () {
       var user = localStorage.getItem('user');
       var currentUser = null;
-
+ 
       if (user) {
         user = JSON.parse(user);
         currentUser = user;
         isLoggedIn = true;
-
         $('#loginBtn').hide();
         $('#eventRegisterBtn').show();
         $('#userWelcome').text('Welcome, ' + user.name).show();
         $('#subscriptionStatus').show();
         $('#logoutBtn').show();
         loadSubscriptionStatus(user.email);
-
-        // Show admin link for admin user
         if (user.email === ADMIN_EMAIL) {
           $('#adminNavLink').show();
-          $('#eventRegisterBtn').show();
         }
       } else {
         $('#loginBtn').show();
         $('#eventRegisterBtn, #userWelcome, #subscriptionStatus, #subscribeBtn, #logoutBtn').hide();
       }
-
+ 
       $('#logoutBtn').on('click', function(e) {
         e.preventDefault();
         localStorage.clear();
         alert('Logged out successfully!');
         location.reload();
       });
-
+ 
       $('#subscribeBtn').on('click', function(e) {
         e.preventDefault();
         if (!currentUser || !currentUser.email) { alert('Please login to subscribe.'); return; }
@@ -277,21 +274,16 @@
           contentType: "application/json; charset=utf-8",
           data: JSON.stringify({ name: currentUser.name, emailId: currentUser.email }),
           success: function(r) {
-            if (r.success) {
-              updateSubscriptionUI(true);
-              // Reload events to update buttons
-              loadAllEvents();
-            } else {
-              alert(r.message || 'Subscription failed.');
-            }
+            if (r.success) { updateSubscriptionUI(true); loadAllEvents(); }
+            else { alert(r.message || 'Subscription failed.'); }
           },
           error: function(xhr) { alert((xhr.responseJSON && xhr.responseJSON.message) || 'Subscription failed.'); }
         });
       });
-
+ 
       loadAllEvents();
     });
-
+ 
     function loadAllEvents() {
       $.ajax({
         url: API + "/events/getAll", type: "GET", dataType: "json",
@@ -299,24 +291,21 @@
         error: function() { console.error("Error loading events"); }
       });
     }
-
+ 
     function loadSubscriptionStatus(email) {
       $.ajax({
         url: API + "/students/subscription?emailId=" + encodeURIComponent(email),
         type: "GET",
         success: function(r) {
-          var subscribed = r.data && r.data.subscribed === true;
-          updateSubscriptionUI(subscribed);
-          // Reload events after knowing subscription status
+          updateSubscriptionUI(r.data && r.data.subscribed === true);
           loadAllEvents();
         },
         error: function() { updateSubscriptionUI(false); }
       });
     }
-
+ 
     function updateSubscriptionUI(subscribed) {
       isSubscribed = subscribed;
-      // Save to localStorage for other pages
       var user = localStorage.getItem('user');
       if (user) {
         var u = JSON.parse(user);
